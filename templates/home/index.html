@@ -1,0 +1,19 @@
+<title>앙 개물띠</title>
+<h1>
+  Hello, world. 
+  <span id="time">{{ current_time }}</span>
+</h1>
+<script type="text/javascript">
+var h = {{ now.hour }}, m = {{ now.minute }}, s = {{ now.second }};
+function update(){
+  s += 1;
+  if(s >= 60){ s = 0, m++; }
+  if(m >= 60){ m = 0, h++; }
+  if(h >= 24){ h = 0; }
+  var f = function(num){
+    return ("0" + num).slice(-2);
+  }
+  document.getElementById("time").innerHTML = f(h)+":"+f(m)+":"+f(s);
+}
+setInterval(update, 1000);
+</script>
