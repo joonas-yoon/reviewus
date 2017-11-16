@@ -57,11 +57,17 @@ else: # JSON env
     GOOGLE_KEY = get_env('GOOGLE_KEY', envs)
     GOOGLE_SECRET = get_env('GOOGLE_SECRET', envs)
 
+    DB_HOST = get_env('DB_HOST', envs)
+    DB_PORT = get_env('DB_PORT', envs)
+    DB_NAME = get_env('DB_NAME', envs)
+    DB_USERNAME = get_env('DB_USERNAME', envs)
+    DB_PASSWORD = get_env('DB_PASSWORD', envs)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '<secret-key>'
+SECRET_KEY = 'p!y1+3%&8r%8h=k&t#7j2g7_)5qju%hu%fngyha(r8#z=vxk*!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -124,11 +130,11 @@ WSGI_APPLICATION = 'reviewus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '<databases-name>',
-        'USER': '<dbms-user>',
-        'PASSWORD': '<dbms-password>',
-        'HOST': 'localhost',
-        'PORT': 0000 # port
+        'NAME': DB_NAME,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST or 'localhost',
+        'PORT': DB_PORT or 3306
     }
 }
 

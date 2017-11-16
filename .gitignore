@@ -17,5 +17,11 @@ tests/.coverage
 build/
 tests/report/
 
+# Log files
+*.log
+
 # Virutal Environments
 env/
+
+# e.g. API KEYs
+envs.json
