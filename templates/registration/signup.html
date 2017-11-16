@@ -1,0 +1,95 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Review Us - Login{% endblock %}
+
+{% block css %}
+<style>
+body {
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  min-width: 320px;
+  background: #FFFFFF;
+  font-size: 14px;
+  line-height: 1.4285em;
+  color: rgba(0, 0, 0, 0.87);
+  font-smoothing: antialiased;
+}
+body > .grid {
+  height: 100%;
+}
+
+.grid .column {
+  max-width: 360px;
+}
+
+.login_background {
+  background: url(https://christmasstockimages.com/free/abstract/star_shaped_light_bokeh.jpg) center center no-repeat;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
+  width: 110%;
+  height: 110%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="login_background"></div>
+
+<div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui yellow image header">
+      <img src="{% static 'images/logo.png' %}" class="image">
+    </h2>
+    <form class="ui large form" method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <input type="text" name="username" placeholder="E-mail address" autofocus maxlength="254">
+            <i class="user icon"></i>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <input type="password" name="password" placeholder="Password">
+            <i class="lock icon"></i>
+          </div>
+        </div>
+        <div class="ui fluid large red submit button">가입하기</div>
+      </div>
+
+      {% if form.errors %}
+      <div class="ui error message" style="display: block">
+        {{ form.errors }}
+      </div>
+      {% endif %}
+    </form>
+
+    <div class="ui vertical fluid labeled icon buttons">
+      <a class="ui fluid large facebook button" href="{% url 'social:begin' 'facebook' %}" style="margin-top: 1em;">
+        <i class="facebook icon"></i>
+        Facebook으로 로그인
+      </a>
+      <a class="ui fluid large orange button" href="{% url 'accounts:signup' %}" style="margin-top: 1em;">
+        <i class="mail icon"></i>
+        지금 등록하기
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(function(){
+  $('.form').form();
+});
+</script>
+{% endblock %}

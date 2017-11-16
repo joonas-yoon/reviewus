@@ -1,0 +1,7 @@
+.ui.form .fields .field .ui.input input, .ui.form .field .ui.input input {
+  width: inherit;
+}
+
+.ui.form .success.message, .ui.form .warning.message, .ui.form .error.message {
+  text-align: left;
+}

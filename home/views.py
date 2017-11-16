@@ -1,20 +1,15 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.views import login
 
 from datetime import datetime, timezone, timedelta
 
+
 def index(request):
-  tz = 9
-  now = datetime.time(datetime.now(timezone(timedelta(hours=tz))))
-  current_time = "%02d:%02d:%02d</h1>" % (now.hour, now.minute, now.second)
-  context = {
-    'current_time': current_time,
-    'now': now
-  }
+  if request.user.is_authenticated():
+    return HttpResponseRedirect(reverse('accounts:index'))
 
-  return render(request, 'home/index.html', context)
+  return render(request, 'home/index.html')
 
-def echo(request, echo_msg):
-  res = "<h1>Hello, %s</h1>"
-  return HttpResponse(res % echo_msg)
 

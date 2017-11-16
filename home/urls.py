@@ -6,5 +6,4 @@ app_name = 'home'
 
 urlpatterns = [
   url(r'^$', views.index, name='index'),
-  url(r'^(?P<echo_msg>\w+)/$', views.echo, name='echo'),
 ]
