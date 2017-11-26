@@ -2,7 +2,7 @@
 
 {% load staticfiles %}
 
-{% block title %}Review Us - Login{% endblock %}
+{% block site_title %}Review Us - 회원가입{% endblock %}
 
 {% block css %}
 <style>
@@ -46,18 +46,30 @@ body > .grid {
     <h2 class="ui yellow image header">
       <img src="{% static 'images/logo.png' %}" class="image">
     </h2>
-    <form class="ui large form" method="POST" action="{% url 'login' %}">
+    <form class="ui large form" method="POST" action="{% url 'accounts:signup' %}">
       {% csrf_token %}
       <div class="ui stacked segment">
         <div class="field">
           <div class="ui left icon input">
-            <input type="text" name="username" placeholder="E-mail address" autofocus maxlength="254">
-            <i class="user icon"></i>
+            {{ form.username }}
+            <i class="spy icon"></i>
           </div>
         </div>
         <div class="field">
           <div class="ui left icon input">
-            <input type="password" name="password" placeholder="Password">
+            {{ form.email }}
+            <i class="mail icon"></i>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            {{ form.password1 }}
+            <i class="lock icon"></i>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            {{ form.password2 }}
             <i class="lock icon"></i>
           </div>
         </div>
@@ -76,9 +88,9 @@ body > .grid {
         <i class="facebook icon"></i>
         Facebook으로 로그인
       </a>
-      <a class="ui fluid large orange button" href="{% url 'accounts:signup' %}" style="margin-top: 1em;">
+      <a class="ui fluid large yellow button" href="{% url 'accounts:signup' %}" style="margin-top: 1em;">
         <i class="mail icon"></i>
-        지금 등록하기
+        기존 아이디로 로그인
       </a>
     </div>
   </div>
@@ -93,3 +105,4 @@ $(function(){
 });
 </script>
 {% endblock %}
+
