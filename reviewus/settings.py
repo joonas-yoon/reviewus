@@ -65,6 +65,9 @@ else: # JSON env
 
     ENV_SECRET_KEY = get_env('SECRET_KEY', envs)
 
+    SENDGRID_USERNAME = get_env('SENDGRID_USERNAME', envs)
+    SENDGRID_PASSWORD = get_env('SENDGRID_PASSWORD', envs)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -218,6 +221,16 @@ LOGGING = {
         },
     },
 }
+
+# Sending E-mail over SMTP with Django
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = SENDGRID_USERNAME or 'sendgrid_username'
+EMAIL_HOST_PASSWORD = SENDGRID_PASSWORD or 'sendgrid_password'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 
 # SOCIAL KEYS for login with Facebook
 

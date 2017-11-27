@@ -51,13 +51,7 @@ body > .grid {
       <div class="ui stacked segment">
         <div class="field">
           <div class="ui left icon input">
-            {{ form.username }}
-            <i class="spy icon"></i>
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left icon input">
-            {{ form.email }}
+            <input type="email" name="{{ form.username.name }}" placeholder="이메일 주소" autofocus maxlength=254 />
             <i class="mail icon"></i>
           </div>
         </div>
@@ -88,7 +82,7 @@ body > .grid {
         <i class="facebook icon"></i>
         Facebook으로 로그인
       </a>
-      <a class="ui fluid large yellow button" href="{% url 'accounts:signup' %}" style="margin-top: 1em;">
+      <a class="ui fluid large yellow button" href="{% url 'login' %}" style="margin-top: 1em;">
         <i class="mail icon"></i>
         기존 아이디로 로그인
       </a>
