@@ -5,16 +5,6 @@ from django.contrib.auth.models import User
 
 
 class SignupForm(UserCreationForm):
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(
-            attrs={
-               'class': 'form-control',
-               'placeholder': 'E-mail Address',
-               'required': 'True',
-            }
-        )
-    )
     password1 = forms.CharField(
         label='Password',
         widget=forms.PasswordInput(
@@ -39,7 +29,16 @@ class SignupForm(UserCreationForm):
  
     class Meta: # SignupForm에 대한 기술서
         model = User
-        fields = ("username", "email", "password1", "password2",) # 작성한 필드만큼 화면에 보여짐
+        fields = ("username", "password1", "password2",) # 작성한 필드만큼 화면에 보여짐
+
+    def save(self, commit=True):
+        user = super(SignupForm, self).save(commit=False)
+        user.email = user.email or self.cleaned_data['username']
+        
+        if commit:
+            user.save()
+
+        return user
  
  
 class LoginForm(AuthenticationForm):
