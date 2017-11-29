@@ -79,12 +79,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com', '*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    'polls.apps.PollsConfig',
     'accounts.apps.AccountsConfig',
+    'home.apps.HomeConfig',
 
     'social_django',
     'django.contrib.humanize',

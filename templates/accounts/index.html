@@ -4,5 +4,15 @@
 
 {% block site_title %}Review Us{% endblock %}
 
-
+{% block content %}
+<div class="ui conatiner">
+  <br>
+  <h1 class="ui header">{ {{ user.username }} }님의 정보</h1>
+  
+  <h3>작성한 리뷰들</h3>
+  {% for review in reviews %}
+  <p>{{ review }}</p>
+  {% endfor %}
+</div>  
+{% endblock %}
 

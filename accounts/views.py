@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib.auth import login, authenticate
 from .forms import SignupForm, LoginForm
 
+from reviewus.db import DBManager as DB
+
 
 def signup(request):
   if request.method == 'POST':
@@ -22,12 +24,18 @@ def signup(request):
 
   return render(request, 'registration/signup.html', {
     'form': form
-  });
+  })
 
 
 def index(request):
   if not request.user.is_authenticated():
     return HttpResponseRedirect(reverse('login'))
+
+  sql = 'SELECT * FROM ru_review WHERE author_id = %d' % request.user.id
+  my_reviews = DB.execute_and_fetch_all(sql, as_list=True)
   
-  return HttpResponse("Welcome %s" % request.user.username)
+  return render(request, 'accounts/index.html', {
+    'user': request.user,
+    'reviews': my_reviews
+  })
 
