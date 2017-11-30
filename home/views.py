@@ -9,7 +9,8 @@ def index(request):
   if not request.user.is_authenticated():
     return render(request, 'home/index.html')
 
-  sql = 'SELECT R.*, U.username, E.title as episode_title, P.title as program_title \
+  sql = 'SELECT R.*, U.username, E.title as episode_title, E.program_id, \
+             P.title as program_title \
          FROM ru_review as R, auth_user as U, ru_episode as E, ru_program as P \
          WHERE R.author_id = U.id AND R.episode_id = E.id AND E.program_id = P.id \
          ORDER BY R.creation_time desc \

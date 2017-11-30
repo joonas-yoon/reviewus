@@ -11,8 +11,9 @@
   <!-- Site Properties -->
   <title>{% block site_title %}Review us{% endblock %}</title>
 
-  <!--<link rel="stylesheet" type="text/css" href="{% static 'semantic/dist/semantic.min.css' %}" />-->
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.0/semantic.css" />
+  <link rel="stylesheet" type="text/css" href="{% static 'semantic/dist/semantic.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'semantic-calendar/dist/calendar.min.css' %}" />
+
   {% block css %}
   {% endblock %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
@@ -38,6 +39,7 @@
 </body>
 <script type="text/javascript" src="{% static 'jquery-3.1.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'semantic/dist/semantic.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'semantic-calendar/dist/calendar.min.js' %}"></script>
 {% block script %}
 {% endblock %}
 </html>

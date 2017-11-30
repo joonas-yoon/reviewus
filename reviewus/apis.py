@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from reviewus.db import DBManager as DB
 
+from django.http import HttpRequest, QueryDict
 
-def get_program_list(page=1, nums=20):
-    page = max(0, int(page) - 1)
-    nums = max(0, int(nums))
+
+def get_program_list(page, nums):
+    page = max(0, int(page or 1) - 1)
+    nums = max(0, int(nums or 20))
 
     sql = 'SELECT P.*, G.name AS genre_name, B.name AS broad_name, \
                COUNT(E.id) AS num_episodes, \
@@ -26,6 +30,7 @@ def get_program_list(page=1, nums=20):
            LIMIT %d OFFSET %d' % (int(nums or 20), int(page or 0) * nums)
 
     programs = DB.execute_and_fetch_all(sql, as_list=True)
+    print(programs)
     return programs
 
 
@@ -53,4 +58,58 @@ def get_program(id):
     program['episodes'] = DB.execute_and_fetch_all(sql, as_list=True)
 
     return program
+
+
+def create_program(req):
+    query = QueryDict()
+    if type(req) == type(QueryDict()):
+        query = req
+    else:
+        try:
+          query = QueryDict(req)
+        except:
+            return None
+
+    def parse_date(date):
+        return datetime.strftime(datetime.strptime(date, '%Y년 %m월 %d일'), '%Y-%m-%d') if date else 'NULL'
+
+    print(dict(query))
+
+    try:
+        data = {
+            'title': query.get('title'),
+            'content': query.get('content'),
+            'broadcast_id': int(query.get('broadcast_id')),
+            'genre_id': int(query.get('genre_id')),
+            'start_date': parse_date(query.get('start_date')),
+            'end_date': parse_date(query.get('end_date'))
+        }
+
+        print(data)
+
+        sql = 'INSERT INTO ru_program \
+                   (title, content, broadcast_id, genre_id, start_date, end_date) \
+               VALUES \
+                   ("{title}", "{content}", {broadcast_id}, \
+                   {genre_id}, "{start_date}", "{end_date}")'.format(**data)
+
+        print(sql)
+        res = DB.execute(sql, cursor=True)
+        try:
+            return res.lastrowid
+        except:
+            print("...except...!!")
+            return None
+
+    except:
+        return None
+
+
+def get_broadcastsystem_list():
+    sql = 'SELECT * FROM ru_broadcast_system'
+    return DB.execute_and_fetch_all(sql, as_list=True)
+
+def get_genre_list():
+    sql = 'SELECT * FROM ru_genre'
+    return DB.execute_and_fetch_all(sql, as_list=True)
 

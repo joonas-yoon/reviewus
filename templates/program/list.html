@@ -7,6 +7,11 @@
 {% block content %}
 <div class="ui container">
   <br>
+  <a href="{% url 'program:create' %}" class="ui labeled icon button">
+    <i class="plus icon"></i>
+    Create
+  </a>
+  <div class="ui divider"></div>
   <div class="ui four cards">
     {% for program in programs %}
     <div class="ui raised card">
