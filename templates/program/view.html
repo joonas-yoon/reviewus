@@ -1,0 +1,20 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}ReviewUs - 프로그램{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <br>
+  {% for p in program %}
+  <p>{{ p }}</p>
+  {% endfor %}
+
+  <h2>Episodes</h2>
+  {% for episode in program.episodes %}
+  <p>{{ episode }}</p>
+  {% endfor %}
+</div>
+{% endblock %}
+

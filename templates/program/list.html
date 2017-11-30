@@ -1,0 +1,48 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}ReviewUs - 프로그램 목록{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <br>
+  <div class="ui four cards">
+    {% for program in programs %}
+    <div class="ui raised card">
+      <div class="content">
+        <a href="{% url 'program:view' program.id %}" class="header">{{ program.title }}</a>
+        <div class="meta">
+          <span class="date">
+            {{ program.start_date | date:"Y/m/d" }} ~ {{ program.end_date | date:"Y/m/d" }}
+          </span>
+        </div>
+      </div>
+      <div class="content">
+        <a>
+          <i class="film icon"></i>
+          {{ program.num_episodes }}개의 에피소드
+        </a>
+      </div>
+      <div class="extra content">
+        Rating: 
+        <div class="ui star rating" data-rating="{{ program.avg_star | floatformat:"0" }}" data-max-rating="5"></div>
+        {{ program.avg_star | floatformat:"2" }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('.cards .image').dimmer({
+    on: 'hover'
+});
+$('.rating').rating({
+  
+});
+</script>
+{% endblock %}
