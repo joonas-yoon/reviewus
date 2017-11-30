@@ -83,11 +83,17 @@ class DBManager:
 
   @staticmethod
   def as_row(cursor, query_set):
+    if cursor is None or query_set is None:
+      return dict()
+
     fields = DBManager.get_fields(cursor)
     return dict(zip(fields, list(query_set)))
 
   @staticmethod
   def as_list(cursor, query_set):
+    if cursor is None or query_set is None:
+      return list()
+
     fields = DBManager.get_fields(cursor)
     results = list(query_set)
     try:
