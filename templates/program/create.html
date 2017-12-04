@@ -1,0 +1,89 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}ReviewUs - 프로그램 생성{% endblock %}
+
+{% block container %}
+
+<form class="ui form" method="POST" action="{% url 'program:create' %}">
+  {% csrf_token %}
+  <h2 class="ui dividing header">Program Information</h2>
+  <div class="three fields">
+    <div class="field">
+      <label>Title</label>
+      <input type="text" name="title" placeholder="프로그램 제목" maxlength="50">
+    </div>
+    <div class="field">
+      <label>방송사</label>
+      <select name="broadcast_id" class="ui fluid dropdown">
+        <option value="">Select</option>
+        {% for broad in broadcastings %}
+        <option value="{{ broad.id }}">{{ broad.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>장르</label>
+      <select name="genre_id" class="ui fluid dropdown">
+        <option value="">Select</option>
+        {% for g in genres %}
+        <option value="{{ g.id }}">{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+  </div>
+  <div class="field">
+    <label>Description</label>
+    <input type="text" name="content" placeholder="프로그램의 간략한 설명" maxlength="100">
+  </div>
+  <div class="two fields">
+    <div class="field">
+      <label>시작 날짜</label>
+      <div class="ui calendar" id="startdate">
+        <div class="ui input left icon">
+          <i class="calendar icon"></i>
+          <input type="text" name="start_date" placeholder="시작 날짜">
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>종료 날짜</label>
+      <div class="ui calendar" id="enddate">
+        <div class="ui input left icon">
+          <i class="calendar icon"></i>
+          <input type="text" name="end_date" placeholder="종료 날짜">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui submit button">Submit</div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+function date_formatter(date, settings) {
+  if (!date) return '';
+  var day = date.getDate();
+  var month = date.getMonth() + 1;
+  var year = date.getFullYear();
+  return year + '년 ' + month + '월 ' + day + '일';
+}
+$('#startdate').calendar({
+  type: 'date',
+  startMode: 'year',
+  formatter: { date: date_formatter }
+});
+$('#enddate').calendar({
+  type: 'date',
+  startMode: 'year',
+  formatter: { date: date_formatter },
+  startCalendar: $('#startdate')
+});
+$('.ui.dropdown').dropdown();
+$('.ui.form').form();
+</script>
+{% endblock %}
