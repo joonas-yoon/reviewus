@@ -45,10 +45,10 @@ class DBManager:
       return DBManager.error_handle()
 
   @staticmethod
-  def execute(sql, cursor=False):
+  def execute(sql, param=None, cursor=False):
     _cursor = DBManager.conn()
     try:
-      result = _cursor.execute(sql)
+      result = _cursor.execute(sql, param)
       if cursor:
         return _cursor
       return result
@@ -56,9 +56,9 @@ class DBManager:
       return DBManager.error_handle()
 
   @staticmethod
-  def execute_and_fetch(sql, as_row=False):
+  def execute_and_fetch(sql, param=None, as_row=False):
     try:
-      cursor = DBManager.execute(sql, cursor=True)
+      cursor = DBManager.execute(sql, param, cursor=True)
       result = cursor.fetchone()
       if as_row:
         return DBManager.as_row(cursor, result)
@@ -67,9 +67,9 @@ class DBManager:
       return DBManager.error_handle()
 
   @staticmethod
-  def execute_and_fetch_all(sql, as_list=False):
+  def execute_and_fetch_all(sql, param=None, as_list=False):
     try:
-      cursor = DBManager.execute(sql, cursor=True)
+      cursor = DBManager.execute(sql, param, cursor=True)
       result = cursor.fetchall()
       if as_list:
         return DBManager.as_list(cursor, result)
