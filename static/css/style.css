@@ -8,3 +8,10 @@ html, body {
 * {
   font-family: 'Nanum Gothic', 'Malgun Gothic', monospace, sans-serif;
 }
+
+blockquote.basic {
+  margin-left: 5px;
+  border-left: 5px solid #666;
+  padding: 1em 2em;
+}
+

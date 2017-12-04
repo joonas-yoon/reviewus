@@ -18,7 +18,7 @@ def query_from_request(req):
 
 
 def parse_date(date):
-    return datetime.strftime(datetime.strptime(date, '%Y년 %m월 %d일'), '"%Y-%m-%d"') if date else 'NULL'
+    return datetime.strftime(datetime.strptime(date, '%Y년 %m월 %d일'), '%Y-%m-%d') if date else None
 
 """
 ######################################################
@@ -50,9 +50,10 @@ def get_program_list(page, nums=20):
                    AND P.genre_id = G.id \
            GROUP BY P.id \
            ORDER BY start_date DESC, title \
-           LIMIT %d OFFSET %d' % (int(nums or 20), int(page or 0) * nums)
+           LIMIT %s OFFSET %s'
+    params = (int(nums or 20), int(page or 0) * nums)
 
-    programs = DB.execute_and_fetch_all(sql, as_list=True)
+    programs = DB.execute_and_fetch_all(sql, param=params, as_list=True)
     print(programs)
     return programs
 
@@ -60,10 +61,11 @@ def get_program_list(page, nums=20):
 def get_program(id):
     id = int(id or 0)
 
-    sql = 'SELECT * FROM ru_program WHERE id = %d' % id
-    program = DB.execute_and_fetch(sql, as_row=True)
+    sql = 'SELECT * FROM ru_program WHERE id = %s'
+    param = (id)
+    program = DB.execute_and_fetch(sql, param=param, as_row=True)
 
-    if program is None:
+    if not program:
         return None
 
     program['episodes'] = get_episode_list(id)
@@ -73,24 +75,22 @@ def get_program(id):
 def create_program(req):
     query = query_from_request(req)
 
-    print(dict(query))
-
-    data = {
-        'title': query.get('title'),
-        'content': query.get('content'),
-        'broadcast_id': int(query.get('broadcast_id')),
-        'genre_id': int(query.get('genre_id')),
-        'start_date': parse_date(query.get('start_date')),
-        'end_date': parse_date(query.get('end_date'))
-    }
-
     sql = 'INSERT INTO ru_program \
                (title, content, broadcast_id, genre_id, start_date, end_date) \
            VALUES \
-               ("{title}", "{content}", {broadcast_id}, \
-               {genre_id}, {start_date}, {end_date})'.format(**data)
+               (%s, %s, %s, %s, %s, %s)'
+    data = (
+        query.get('title'),
+        query.get('content'),
+        int(query.get('broadcast_id') or 0),
+        int(query.get('genre_id') or 0),
+        parse_date(query.get('start_date')),
+        parse_date(query.get('end_date')),
+    )
+
+    print(data)
     
-    res = DB.execute(sql, cursor=True)
+    res = DB.execute(sql, param=data, cursor=True)
     newpid = int(res.lastrowid)
 
     print("new program id = {}".format(newpid))
@@ -104,6 +104,18 @@ def create_program(req):
         pass
     return None
 
+
+def delete_program(id):
+    sql = 'DELETE FROM ru_program WHERE id = %d'
+
+    try:
+        res = DB.execute(sql, param=(id, ))
+        return res > 0
+    except:
+        pass
+    return False
+
+
 """
 ######################################################
 #
@@ -114,40 +126,33 @@ def create_program(req):
 def get_episode_list(program_id):
     program_id = int(program_id or 0)
     sql = 'SELECT E.*, \
-               COUNT(DISTINCT E.id) AS num_episodes \
-           FROM \
-               ru_program AS P, \
-               ru_episode AS E \
-           WHERE \
-               P.id = %d \
-               AND E.program_id = P.id \
-           GROUP BY E.id' % program_id
+               AVG(R.star) as avg_star, \
+               COUNT(R.id) as total_reviews \
+           FROM ru_episode AS E \
+           LEFT JOIN ru_review AS R \
+           ON R.episode_id = E.id \
+           WHERE E.program_id = %s \
+           GROUP BY E.id'
 
-    print(sql)
-
-    return DB.execute_and_fetch_all(sql, as_list=True)
+    return DB.execute_and_fetch_all(sql, param=(program_id), as_list=True)
 
 
 def create_episode(req):
     query = query_from_request(req)
 
-    data = {
-        'program_id': int(query.get('program_id')),
-        'title': query.get('title'),
-        'content': query.get('content') or '',
-        'airdate': parse_date(query.get('airdate'))
-    }
-
-    print(data)
-
     sql = 'INSERT INTO ru_episode \
               (program_id, title, content, airdate) \
           VALUES \
-              ({program_id}, "{title}", "{content}", {airdate})'.format(**data)
+              (%s, %s, %s, %s)'
 
-    print(">>>> sql: " + sql)
+    data = (
+        int(query.get('program_id')),
+        query.get('title'),
+        query.get('content') or '',
+        parse_date(query.get('airdate'))
+    )
 
-    res = DB.execute(sql, cursor=True)
+    res = DB.execute(sql, param=data, cursor=True)
     try:
         return res.lastrowid
     except:

@@ -1,0 +1,50 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}ReviewUs - 프로그램 삭제{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <br>
+  <h1 class="dividing header">{{ program.title }}</h1>
+  <div class="ui message">{{ program.content }}</div>
+
+  <div class="ui red message">
+    <div class="header">
+      주의!
+    </div>
+    <p>이 프로그램은 아래의 에피소들을 갖고 있습니다.</p>
+  </div>
+
+  <h2>Episodes</h2>
+  <div class="ui segment">
+    <div class="ui list">
+    {% for episode in program.episodes %}
+    <div class="item" style="padding-bottom: 5px">
+      <i class="film icon"></i>
+      <div class="content">
+        <div class="header">{{ episode.title }}</div>
+        <div class="description">{{ episode.content | truncatewords:5 }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+  </div>
+
+  <div class="ui divider"></div>
+
+  <div class="ui red attached message">
+    <div class="header">
+      정말 삭제하시겠습니까?
+    </div>
+  </div>
+  <form method="POST" class="ui form attached fluid red segment">
+    {% csrf_token %}
+    <button type="submit" class="ui large button">네, 삭제합니다.</button> &nbsp;
+    <a class="ui red large button" href="{% url 'program:view' program.id %}">아니오</a>
+  </form>
+
+</div>
+{% endblock %}
+

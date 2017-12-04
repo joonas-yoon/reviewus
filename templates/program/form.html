@@ -2,22 +2,24 @@
 
 {% load staticfiles %}
 
-{% block site_title %}ReviewUs - 프로그램 생성{% endblock %}
+{% block site_title %}ReviewUs - 프로그램{% endblock %}
 
 {% block container %}
 
 <form class="ui form" method="POST" action="{% url 'program:create' %}">
   {% csrf_token %}
+  <input type="hidden" name="method" value="{{ method }}" />
+  <input type="hidden" name="id" value="{{ program.id }}" />
   <h2 class="ui dividing header">Program Information</h2>
   <div class="three fields">
     <div class="field">
       <label>Title</label>
-      <input type="text" name="title" placeholder="프로그램 제목" maxlength="50">
+      <input type="text" name="title" placeholder="프로그램 제목" maxlength="50" value="{{ program.title }}">
     </div>
     <div class="field">
       <label>방송사</label>
       <select name="broadcast_id" class="ui fluid dropdown">
-        <option value="">Select</option>
+        <option value="{{ program.broadcast_id }}">Select</option>
         {% for broad in broadcastings %}
         <option value="{{ broad.id }}">{{ broad.name }}</option>
         {% endfor %}
@@ -26,7 +28,7 @@
     <div class="field">
       <label>장르</label>
       <select name="genre_id" class="ui fluid dropdown">
-        <option value="">Select</option>
+        <option value="{{ program.genre_id }}">Select</option>
         {% for g in genres %}
         <option value="{{ g.id }}">{{ g.name }}</option>
         {% endfor %}
@@ -36,7 +38,7 @@
   </div>
   <div class="field">
     <label>Description</label>
-    <input type="text" name="content" placeholder="프로그램의 간략한 설명" maxlength="100">
+    <textarea name="content" placeholder="프로그램의 간략한 설명" maxlength="255">{{ program.content }}</textarea>
   </div>
   <div class="two fields">
     <div class="field">
@@ -44,7 +46,7 @@
       <div class="ui calendar" id="startdate">
         <div class="ui input left icon">
           <i class="calendar icon"></i>
-          <input type="text" name="start_date" placeholder="시작 날짜">
+          <input type="text" name="start_date" placeholder="시작 날짜" value="{{ program.start_date | date:"Y년 m월 d일"}}">
         </div>
       </div>
     </div>
@@ -53,7 +55,7 @@
       <div class="ui calendar" id="enddate">
         <div class="ui input left icon">
           <i class="calendar icon"></i>
-          <input type="text" name="end_date" placeholder="종료 날짜">
+          <input type="text" name="end_date" placeholder="종료 날짜" value="{{ program.end_date | date:"Y년 m월 d일" }}">
         </div>
       </div>
     </div>
@@ -83,6 +85,14 @@ $('#enddate').calendar({
   formatter: { date: date_formatter },
   startCalendar: $('#startdate')
 });
+
+function reload_input(el){
+  $(el).val($(el).val())
+}
+
+reload_input('[name=start_date]');
+reload_input('[name=end_date]');
+
 $('.ui.dropdown').dropdown();
 $('.ui.form').form();
 </script>

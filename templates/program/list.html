@@ -14,11 +14,13 @@
   </a>
   {% endif %}
   <div class="ui divider"></div>
-  <div class="ui four cards">
+
+  <div class="ui four stackable cards">
     {% for program in programs %}
     <div class="ui raised card">
       <div class="content">
         <a href="{% url 'program:view' program.id %}" class="header">{{ program.title }}</a>
+        <div class="meta">{{ program.content | truncatewords:4 }}</div>
         <div class="meta">
           <span class="date">
             {{ program.start_date | date:"Y/m/d" }} ~ {{ program.end_date | date:"Y/m/d" }}
@@ -39,6 +41,16 @@
     </div>
     {% endfor %}
   </div>
+
+  <div class="ui divider"></div>
+  <a href="{% url 'program:list' page.prev %}" class="ui left floated labeled icon button">
+    <i class="left arrow icon"></i>
+    Prev
+  </a>
+  <a href="{% url 'program:list' page.next %}" class="ui right floated labeled icon button">
+    <i class="right arrow icon"></i>
+    Next
+  </a>
 </div>
 {% endblock %}
 

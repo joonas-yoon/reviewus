@@ -7,12 +7,72 @@
 {% block content %}
 <div class="ui container">
   <br>
-  <p>{{ program }}</p>
+  <h1 class="dividing header">{{ program.title }}</h1>
+  <blockquote class="basic">
+    {{ program.content }}
+  </blockquote>
+
+  <table class="ui basic collapsing celled table" style="margin: 0 auto;">
+  <tr><td>방송사</td><td>{{ program.broadcast_id }}</td></tr>
+  <tr><td>장르</td><td>{{ program.genre_id }}</td></tr>
+  <tr><td>시작일</td><td>{{ program.start_date | date:"Y-m-d" }}</td></tr>
+  <tr><td>종료일</td><td>{{ program.end_date | date:"Y-m-d" }}</td></tr>
+  <tr>
+    <td>평균 평점</td>
+    <td>
+      <div class="ui star rating" data-rating="{{ program.avg_star | floatformat:0 }}" data-max-rating="5" style="margin: 0"></div>
+    </td>
+  </tr>
+  </table>
+
+<!--
+  {{ program }}
+-->
 
   <h2>Episodes</h2>
+  <div class="ui feed">
   {% for episode in program.episodes %}
-  <p>{{ episode }}</p>
+    <div class="event">
+      <div class="label">
+        <i class="film icon"></i>
+      </div>
+      <div class="content">
+        <div class="summary">
+          <a href="#/episode/{{ episode.it }}">{{ episode.title }}</a>
+        </div>
+        <div class="extra text">
+          {{ episode.content | truncatewords:10 }}
+        </div>
+        <div class="meta">
+          <a href="#ratings">총 {{ episode.total_reviews }}개의 평가</a>
+          (<div class="ui star rating" data-rating="{{ episode.avg_star | floatformat:0 }}" data-max-rating="5" style="margin: 0"></div>)
+        </div>
+        <div class="meta">
+          <div class="date">{{ episode.airdate | date:"Y-m-d" }}</div>
+        </div>
+      </div>
+    </div>
   {% endfor %}
+  </div>
+
+  <div class="ui divider"></div>
+
+  <a href="{% url 'program:list' %}" class="ui left labeled icon button">
+    <i class="list icon"></i> 목록으로
+  </a>
+
+  {% if request.user.is_staff %}
+  <a href="{% url 'program:edit' program.id %}" class="ui left labeled icon button">
+    <i class="edit icon"></i> 수정하기
+  </a>
+  {% endif %}
+
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+$('.rating').rating('disable');
+</script>
 {% endblock %}
 
