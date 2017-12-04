@@ -7,10 +7,12 @@
 {% block content %}
 <div class="ui container">
   <br>
+  {% if request.user.is_staff %}
   <a href="{% url 'program:create' %}" class="ui labeled icon button">
     <i class="plus icon"></i>
     Create
   </a>
+  {% endif %}
   <div class="ui divider"></div>
   <div class="ui four cards">
     {% for program in programs %}

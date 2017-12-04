@@ -10,7 +10,7 @@ import reviewus.apis as API
 
 def list(request, page):
     return render(request, 'program/list.html', {
-        'programs': API.get_program_list(page, 5)
+        'programs': API.get_program_list(page)
     })
 
 
