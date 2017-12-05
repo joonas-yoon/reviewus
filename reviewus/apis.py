@@ -54,14 +54,21 @@ def get_program_list(page, nums=20):
     params = (int(nums or 20), int(page or 0) * nums)
 
     programs = DB.execute_and_fetch_all(sql, param=params, as_list=True)
-    print(programs)
     return programs
 
 
 def get_program(id):
     id = int(id or 0)
 
-    sql = 'SELECT * FROM ru_program WHERE id = %s'
+    sql = 'SELECT P.*, B.name as broadcast_name, G.name as genre_name \
+           FROM \
+               ru_program AS P, \
+               ru_broadcast_system AS B, \
+               ru_genre AS G \
+           WHERE \
+               P.id = %s \
+               AND P.broadcast_id = B.id \
+               AND P.genre_id = G.id'
     param = (id)
     program = DB.execute_and_fetch(sql, param=param, as_row=True)
 
@@ -91,7 +98,10 @@ def create_program(req):
     print(data)
     
     res = DB.execute(sql, param=data, cursor=True)
-    newpid = int(res.lastrowid)
+    try:
+        newpid = int(res.lastrowid)
+    except:
+        return None
 
     print("new program id = {}".format(newpid))
     create_episode({
