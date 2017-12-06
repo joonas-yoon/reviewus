@@ -56,7 +56,7 @@
       </div>
       <div class="content">
         <div class="summary">
-          <a href="#/episode/{{ episode.it }}">{{ episode.title }}</a>
+          <a href="{% url 'episode:view' episode.id %}">{{ episode.title }}</a>
         </div>
         <div class="extra text">
           {{ episode.content | truncatewords:10 }}
@@ -89,7 +89,15 @@
     <i class="trash icon"></i>
   </a>
 
-  {% include 'episode/form.html' with program=program %}
+
+  <div class="ui modal" id="modal_episode">
+    <i class="close icon"></i>
+
+    <div class="header">에피소드</div>
+    <div class="content">
+      {% include 'episode/form.html' with program=program %}
+    </div>
+  </div>
   {% endif %}
 
 </div>
@@ -98,6 +106,18 @@
 {% block script %}
 <script>
 $('.rating').rating('disable');
+
+$('#modal_episode')
+  .modal({ inverted: true })
+  .modal('attach events', '#show_modal_episode', 'show')
+  .modal({
+    onVisible: $('#airdate').calendar({
+      type: 'date',
+      startMode: 'year',
+      formatter: { date: date_formatter }
+    }),
+  })
+;
 </script>
 {% endblock %}
 

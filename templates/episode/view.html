@@ -1,0 +1,48 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+{% load humanize %}
+
+{% block site_title %}리뷰어스 - 에피소드 목록{% endblock %}
+
+{% block content %}
+<div class="ui container">
+
+  <br><br>
+
+  {% include 'program/nav.html' with program=program episode=episode %}
+
+  <div class="ui basic segment">
+    <p><i class="calendar icon"></i>&nbsp;{{ episode.airdate | date | naturalday | default:"미정" }}</p>
+    <blockquote class="basic">
+      {{ episode.content | default:"(내용 없음)" | truncatewords:50 }}
+    </blockquote>
+  </div>
+
+  <a href="{% url 'episode:list' %}" class="ui left labeled icon button">
+    <i class="list icon"></i> 목록으로
+  </a>
+
+  {% if request.user.is_staff %}
+  <a href="{% url 'episode:edit' episode.id %}" class="ui left labeled icon yellow button">
+    <i class="pencil icon"></i> 수정하기
+  </a>
+
+  <a href="{% url 'episode:delete' episode.id %}" class="ui right floated icon red button">
+    <i class="trash icon"></i>
+  </a>
+
+  {% endif %}
+
+  <div class="ui basic segment">
+    ... reviews ...
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('.rating').rating('disable');
+</script>
+{% endblock %}

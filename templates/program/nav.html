@@ -1,0 +1,14 @@
+{% load staticfiles %}
+
+<div class="ui huge breadcrumb">
+  <a href="{% url 'program:list' %}" class="section">프로그램 전체</a>
+  {% if program and episode %}
+    <i class="right chevron icon divider"></i>
+    <a href="{% url 'program:view' program.id %}" class="section">{{ program.title }}</a>
+    <i class="right chevron icon divider"></i>
+    <a href="{% url 'episode:view' episode.id %}" class="active section">{{ episode.title }}</a>
+  {% elif program %}
+    <i class="right chevron icon divider"></i>
+    <a href="{% url 'program:view' program.id %}" class="active section">{{ program.title }}</a>
+  {% endif %}
+</div>

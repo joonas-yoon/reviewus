@@ -46,14 +46,17 @@
   </div>
 
   <div class="ui divider"></div>
-  <a href="{% url 'program:list' page.prev %}" class="ui left floated labeled icon button">
-    <i class="left arrow icon"></i>
-    Prev
-  </a>
-  <a href="{% url 'program:list' page.next %}" class="ui right floated labeled icon button">
-    <i class="right arrow icon"></i>
-    Next
-  </a>
+
+  <div style="padding-bottom: 2em; margin-bottom: 2em;">
+    <a href="{% url 'program:list' page.prev %}" class="ui left floated labeled icon button">
+      <i class="left arrow icon"></i>
+      Prev
+    </a>
+    <a href="{% url 'program:list' page.next %}" class="ui right floated labeled icon button">
+      <i class="right arrow icon"></i>
+      Next
+    </a>
+  </div>
 </div>
 {% endblock %}
 

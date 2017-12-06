@@ -1,0 +1,41 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+{% load humanize %}
+
+{% block site_title %}리뷰어스 - 에피소드 삭제{% endblock %}
+
+{% block content %}
+<div class="ui container">
+
+  <br><br>
+
+  {% include 'program/nav.html' with program=program episode=episode %}
+
+  <h1 class="dividing header">{{ episode.title }}</h1>
+  <p><i class="calendar icon"></i> {{ episode.airdate | date | naturalday | default:"미정" }}</p>
+  <blockquote class="basic">{{ episode.content | linebreaksbr | truncatewords:50 }}</blockquote>
+
+  <div class="ui red message">
+    <div class="header">
+      주의!
+    </div>
+    <p>이 에피소드에는 총 <strong>{{ episode.reviews | default:"0" | add:"0" }}</strong>개의 리뷰가 있습니다!</p>
+  </div>
+
+  <div class="ui divider"></div>
+
+  <div class="ui red attached message">
+    <div class="header">
+      정말 삭제하시겠습니까?
+    </div>
+  </div>
+  <form method="POST" class="ui form attached fluid red segment">
+    {% csrf_token %}
+    <button type="submit" class="ui large button">네, 삭제합니다.</button> &nbsp;
+    <a class="ui red large button" href="{% url 'episode:view' episode.id %}">아니오</a>
+  </form>
+
+</div>
+{% endblock %}
+

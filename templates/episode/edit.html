@@ -1,0 +1,37 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+{% load humanize %}
+
+{% block site_title %}리뷰어스 - 에피소드 수정{% endblock %}
+
+{% block content %}
+<div class="ui container">
+
+  <br><br>
+
+  {% include 'program/nav.html' with program=program episode=episode %}
+
+  <div class="ui basic segment">
+    <p><i class="calendar icon"></i>&nbsp;{{ episode.airdate | date | naturalday | default:"미정" }}</p>
+    <blockquote class="basic">
+      {{ episode.content | default:"(내용 없음)" | truncatewords:50 }}
+    </blockquote>
+  </div>
+  
+  <div class="ui basic segment">
+    {% include 'episode/form.html' with episode=episode program=program %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$('.rating').rating('disable');
+$('#airdate').calendar({
+  type: 'date',
+  startMode: 'year',
+  formatter: { date: date_formatter }
+});
+</script>
+{% endblock %}

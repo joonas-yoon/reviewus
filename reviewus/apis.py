@@ -49,7 +49,7 @@ def get_programs(page=1, nums=20):
                    AND E.program_id = P.id \
                    AND P.genre_id = G.id \
            GROUP BY P.id \
-           ORDER BY start_date DESC, title \
+           ORDER BY start_date IS NULL DESC, start_date DESC, end_date IS NULL DESC, end_date DESC, title \
            LIMIT %s OFFSET %s'
 
     params = (nums, page * nums)
@@ -160,11 +160,16 @@ def delete_program(id):
 #
 ######################################################
 """
+def get_episode(id):
+    sql = 'SELECT * FROM ru_episode WHERE id = %s'
+    return DB.execute_and_fetch(sql, param=(id), as_row=True)
+
+
 def get_episodes(page=1, nums=10):
     page = max(0, int(page or 1) - 1)
     nums = max(0, int(nums or 10))
 
-    sql = 'SELECT * FROM ru_episode ORDER BY airdate DESC LIMIT %s OFFSET %s'
+    sql = 'SELECT * FROM ru_episode WHERE title != "ALL" ORDER BY airdate IS NULL DESC, airdate DESC LIMIT %s OFFSET %s'
 
     params = (nums, page * nums)
 
@@ -181,7 +186,7 @@ def get_episodes_by_program(program_id):
            ON R.episode_id = E.id \
            WHERE E.program_id = %s \
            GROUP BY E.id \
-           ORDER BY airdate DESC'
+           ORDER BY airdate IS NULL DESC, airdate DESC'
 
     return DB.execute_and_fetch_all(sql, param=(program_id), as_list=True)
 
@@ -207,6 +212,40 @@ def create_episode(req):
     except:
         pass
     return None
+
+
+def update_episode(req, id):
+    query = query_from_request(req)
+
+    sql = 'UPDATE ru_episode \
+           SET program_id=%s, title=%s, content=%s, airdate=%s \
+           WHERE id = %s'
+    data = (
+        int(query.get('program_id') or 0),
+        query.get('title'),
+        query.get('content'),
+        parse_date(query.get('airdate')),
+        int(id)
+    )
+
+    try:
+        res = DB.execute(sql, param=data)
+        return id
+    except:
+        pass
+
+    return None
+
+
+def delete_episode(id):
+    sql = 'DELETE FROM ru_episode WHERE id = %s'
+
+    try:
+        res = DB.execute(sql, param=(id, ))
+        return res > 0
+    except:
+        pass
+    return False
 
 
 """

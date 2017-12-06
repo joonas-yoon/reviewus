@@ -14,6 +14,6 @@ urlpatterns = [
 
   url(r'^program/(?P<program_id>\d+)/episode/', include([
     url(r'^add/$', views.create_with_program, name='create_with_program'),
-    url(r'^(?P<nth>\d+)/$', views.view_with_program, name='view_with_program'),
+    url(r'^(?P<nth>\d+)/$', views.view_nth_with_program, name='view_nth_with_program'),
   ])),
 ]
