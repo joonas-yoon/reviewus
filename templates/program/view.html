@@ -37,6 +37,18 @@
 
   <h2>Episodes</h2>
   <div class="ui feed">
+  {% if request.user.is_staff %}
+    <div class="event">
+      <div class="label"></div>
+      <div class="content">
+        <div class="extra text">
+          <button id="show_modal_episode" class="ui left labeled icon basic blue button">
+            <i class="plus icon"></i> 에피소드 추가
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
   {% for episode in program.episodes %}
     <div class="event">
       <div class="label">
@@ -69,9 +81,15 @@
   </a>
 
   {% if request.user.is_staff %}
-  <a href="{% url 'program:edit' program.id %}" class="ui left labeled icon button">
-    <i class="edit icon"></i> 수정하기
+  <a href="{% url 'program:edit' program.id %}" class="ui left labeled icon yellow button">
+    <i class="pencil icon"></i> 수정하기
   </a>
+
+  <a href="{% url 'program:delete' program.id %}" class="ui right floated icon red button">
+    <i class="trash icon"></i>
+  </a>
+
+  {% include 'episode/form.html' with program=program %}
   {% endif %}
 
 </div>

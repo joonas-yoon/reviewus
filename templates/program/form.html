@@ -6,7 +6,7 @@
 
 {% block container %}
 
-<form class="ui form" method="POST" action="{% url 'program:create' %}">
+<form class="ui form" method="POST">
   {% csrf_token %}
   <input type="hidden" name="method" value="{{ method }}" />
   <input type="hidden" name="id" value="{{ program.id }}" />
@@ -38,7 +38,7 @@
   </div>
   <div class="field">
     <label>Description</label>
-    <textarea name="content" placeholder="프로그램의 간략한 설명" maxlength="255">{{ program.content }}</textarea>
+    <textarea name="content" placeholder="프로그램의 간략한 설명" maxlength="500">{{ program.content }}</textarea>
   </div>
   <div class="two fields">
     <div class="field">

@@ -1,0 +1,78 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}ReviewUs - 에피소드{% endblock %}
+
+{% block container %}
+
+{% now "Y년 m월 d일" as now %}
+
+<div class="ui modal" id="modal_episode">
+  <i class="close icon"></i>
+
+  <div class="header">에피소드</div>
+  <div class="content">
+    <form method="POST" class="ui form" id="form_episode" action="{% url 'episode:create_with_program' program.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="method" value="{{ method }}" />
+      <input type="hidden" name="program_id" value="{{ program.id }}" />
+      <input type="hidden" name="id" value="{{ episode.id }}" />
+      <div class="field">
+        <label>제목</label>
+        <input type="text" name="title" placeholder="제목" maxlength="50" value="{{ episode.title | default:"#회" }}" required>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea name="content" placeholder="해당 에피소드에 대한 간략한 설명" maxlength="255">{{ episode.content }}</textarea>
+      </div>
+      <div class="field">
+        <label>방영일자</label>
+        <div class="ui calendar" id="airdate">
+          <div class="ui input left icon">
+            <i class="calendar icon"></i>
+            <input type="text" name="airdate" placeholder="방영일자" value="{{ program.start_date | default:now | date:"Y년 m월 d일"}}">
+          </div>
+        </div>
+      </div>
+      <button class="ui submit primary button">저장</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+function date_formatter(date, settings) {
+  if (!date) return '';
+  var day = date.getDate();
+  var month = date.getMonth() + 1;
+  var year = date.getFullYear();
+  return year + '년 ' + month + '월 ' + day + '일';
+}
+
+function reload_input(el){
+  $(el).val($(el).val())
+}
+
+reload_input('[name=airdate]');
+
+$('#form_episode').form({
+  fields: {
+    title: 'empty'
+  }
+});
+$('#modal_episode')
+  .modal({ inverted: true })
+  .modal('attach events', '#show_modal_episode', 'show')
+  .modal({
+    onVisible: $('#airdate').calendar({
+      type: 'date',
+      startMode: 'year',
+      formatter: { date: date_formatter }
+    }),
+  })
+;
+</script>
+{% endblock %}

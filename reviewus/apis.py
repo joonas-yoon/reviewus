@@ -27,7 +27,7 @@ def parse_date(date):
 #
 ######################################################
 """
-def get_program_list(page, nums=20):
+def get_programs(page=1, nums=20):
     page = max(0, int(page or 1) - 1)
     nums = max(0, int(nums or 20))
 
@@ -51,7 +51,8 @@ def get_program_list(page, nums=20):
            GROUP BY P.id \
            ORDER BY start_date DESC, title \
            LIMIT %s OFFSET %s'
-    params = (int(nums or 20), int(page or 0) * nums)
+
+    params = (nums, page * nums)
 
     programs = DB.execute_and_fetch_all(sql, param=params, as_list=True)
     return programs
@@ -75,7 +76,7 @@ def get_program(id):
     if not program:
         return None
 
-    program['episodes'] = get_episode_list(id)
+    program['episodes'] = get_episodes_by_program(id)
     return program
 
 
@@ -115,8 +116,34 @@ def create_program(req):
     return None
 
 
+def update_program(req, id):
+    query = query_from_request(req)
+
+    sql = 'UPDATE ru_program \
+           SET title=%s, content=%s, broadcast_id=%s, genre_id=%s, start_date=%s, end_date=%s \
+           WHERE id = %s'
+    data = (
+        query.get('title'),
+        query.get('content'),
+        int(query.get('broadcast_id') or 0),
+        int(query.get('genre_id') or 0),
+        parse_date(query.get('start_date')),
+        parse_date(query.get('end_date')),
+        int(id)
+    )
+
+    try:
+        res = DB.execute(sql, param=data)
+
+        return id
+    except:
+        pass
+
+    return None
+
+
 def delete_program(id):
-    sql = 'DELETE FROM ru_program WHERE id = %d'
+    sql = 'DELETE FROM ru_program WHERE id = %s'
 
     try:
         res = DB.execute(sql, param=(id, ))
@@ -133,7 +160,18 @@ def delete_program(id):
 #
 ######################################################
 """
-def get_episode_list(program_id):
+def get_episodes(page=1, nums=10):
+    page = max(0, int(page or 1) - 1)
+    nums = max(0, int(nums or 10))
+
+    sql = 'SELECT * FROM ru_episode ORDER BY airdate DESC LIMIT %s OFFSET %s'
+
+    params = (nums, page * nums)
+
+    return DB.execute_and_fetch_all(sql, param=params, as_list=True)
+
+
+def get_episodes_by_program(program_id):
     program_id = int(program_id or 0)
     sql = 'SELECT E.*, \
                AVG(R.star) as avg_star, \
@@ -142,7 +180,8 @@ def get_episode_list(program_id):
            LEFT JOIN ru_review AS R \
            ON R.episode_id = E.id \
            WHERE E.program_id = %s \
-           GROUP BY E.id'
+           GROUP BY E.id \
+           ORDER BY airdate DESC'
 
     return DB.execute_and_fetch_all(sql, param=(program_id), as_list=True)
 
@@ -169,11 +208,27 @@ def create_episode(req):
         pass
     return None
 
-def get_broadcastsystem_list():
-    sql = 'SELECT * FROM ru_broadcast_system'
+
+"""
+######################################################
+#
+# Broadcast System
+#
+######################################################
+"""
+def get_broadcastsystems():
+    sql = 'SELECT * FROM ru_broadcast_system ORDER BY name'
     return DB.execute_and_fetch_all(sql, as_list=True)
 
-def get_genre_list():
-    sql = 'SELECT * FROM ru_genre'
+
+"""
+######################################################
+#
+# Genre
+#
+######################################################
+"""
+def get_genres():
+    sql = 'SELECT * FROM ru_genre ORDER BY name'
     return DB.execute_and_fetch_all(sql, as_list=True)
 

@@ -1,0 +1,59 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+{% load humanize %}
+
+{% block site_title %}ReviewUs - 에피소드 목록{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <div class="ui divided items">
+  {% for episode in episodes %}
+    <div class="item">
+      <div class="image">
+        <img src="https://semantic-ui.com//images/wireframe/image.png">
+      </div>
+      <div class="content">
+        <a class="header">{{ episode.program.title }} - {{ episode.title }}</a>
+        <div class="meta">
+          <span class="date">
+          {% if episode.airdate %} {{ episode.airdate | naturalday }}
+          {% else %}미정
+          {% endif %}
+          </span>
+        </div>
+        <div class="description">
+          {{ episode.content | default:"(내용 없음)" | truncatewords:10 | linebreaks }}</span>
+        </div>
+        <div class="extra">
+          <div class="ui yellow label">{{ episode.program.genre_name }}</div>
+          <div class="ui label"><i class="record icon"></i> {{ episode.program.broadcast_name }}</div>
+        </div>
+        <div class="extra">
+          <div class="ui rating" data-rating="{{ episode.reviews.avg_star | floatformat:"0" }}" data-max-rating="5"></div>
+          총 {{ episode.reviews.total_star | default:"0" }}개의 평가 ({{ episode.reviews.avg_star | default:"0" | floatformat:"2" }})
+        </div>
+      </div>
+    </div>
+    <!-- {{ episode }} -->
+  {% endfor %}
+  </div>
+
+  <div class="ui divider"></div>
+  <a href="{% url 'episode:list' page.prev %}" class="ui left floated labeled icon button">
+    <i class="left arrow icon"></i>
+    Prev
+  </a>
+  <a href="{% url 'episode:list' page.next %}" class="ui right floated labeled icon button">
+    <i class="right arrow icon"></i>
+    Next
+  </a>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('.rating').rating('disable');
+</script>
+{% endblock %}
