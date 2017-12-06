@@ -11,7 +11,7 @@ import reviewus.apis as API
 
 def list(request, page):
     cur_page = int(page or 1)
-    programs = API.get_program_list(page, 12)
+    programs = API.get_programs(page, 12)
 
     if not programs:
         raise Http404
@@ -29,8 +29,8 @@ def list(request, page):
 @staff_member_required
 def create(request):
     if request.method != 'POST':
-        broadcastings = API.get_broadcastsystem_list()
-        genres = API.get_genre_list()
+        broadcastings = API.get_broadcastsystems()
+        genres = API.get_genres()
 
         return render(request, 'program/form.html', {
             'method': 'create',
@@ -53,8 +53,8 @@ def edit(request, id):
         raise Http404
 
     if request.method != 'POST':
-        broadcastings = API.get_broadcastsystem_list()
-        genres = API.get_genre_list()
+        broadcastings = API.get_broadcastsystems()
+        genres = API.get_genres()
 
         return render(request, 'program/form.html', {
             'method': 'edit',
@@ -63,8 +63,8 @@ def edit(request, id):
             'program': program
         })
 
-    if API.update_program(request.body):
-        return redirect('program:view', id= program.id)
+    if API.update_program(request.body, id= id) is not None:
+        return redirect('program:view', id= id)
     else:
         return HttpResponse('Invalid Form')
 
@@ -84,12 +84,11 @@ def view(request, id):
 def delete(request, id):
     program = API.get_program(id)
 
-    print(program)
-
     if not program:
         raise Http404
 
     if request.method == 'POST':
+        API.delete_program(id)
         return redirect('program:list')
 
     else:

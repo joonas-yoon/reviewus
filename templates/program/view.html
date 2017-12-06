@@ -9,12 +9,18 @@
   <br>
   <h1 class="dividing header">{{ program.title }}</h1>
   <blockquote class="basic">
-    {{ program.content }}
+    {{ program.content | linebreaks }}
   </blockquote>
 
-  <table class="ui basic collapsing celled table" style="margin: 0 auto;">
-  <tr><td>방송사</td><td>{{ program.broadcast_id }}</td></tr>
-  <tr><td>장르</td><td>{{ program.genre_id }}</td></tr>
+  <table class="ui very basic celled table" style="margin: 0 auto;">
+  <tr>
+    <td>방송사</td>
+    <td><a href="#/{{ program.broadcast_id }}">{{ program.broadcast_name }}</a></td>
+  </tr>
+  <tr>
+    <td>장르</td>
+    <td><a href="#/{{ program.genre_id }}">{{ program.genre_name }}</a></td>
+  </tr>
   <tr><td>시작일</td><td>{{ program.start_date | date:"Y-m-d" }}</td></tr>
   <tr><td>종료일</td><td>{{ program.end_date | date:"Y-m-d" }}</td></tr>
   <tr>
@@ -31,6 +37,18 @@
 
   <h2>Episodes</h2>
   <div class="ui feed">
+  {% if request.user.is_staff %}
+    <div class="event">
+      <div class="label"></div>
+      <div class="content">
+        <div class="extra text">
+          <button id="show_modal_episode" class="ui left labeled icon basic blue button">
+            <i class="plus icon"></i> 에피소드 추가
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
   {% for episode in program.episodes %}
     <div class="event">
       <div class="label">
@@ -38,14 +56,15 @@
       </div>
       <div class="content">
         <div class="summary">
-          <a href="#/episode/{{ episode.it }}">{{ episode.title }}</a>
+          <a href="{% url 'episode:view' episode.id %}">{{ episode.title }}</a>
         </div>
         <div class="extra text">
           {{ episode.content | truncatewords:10 }}
         </div>
         <div class="meta">
           <a href="#ratings">총 {{ episode.total_reviews }}개의 평가</a>
-          (<div class="ui star rating" data-rating="{{ episode.avg_star | floatformat:0 }}" data-max-rating="5" style="margin: 0"></div>)
+          ({{ episode.avg_star | floatformat:2 }}&nbsp;
+          <div class="ui star rating" data-rating="{{ episode.avg_star | floatformat:0 }}" data-max-rating="5" style="margin: 0"></div>)
         </div>
         <div class="meta">
           <div class="date">{{ episode.airdate | date:"Y-m-d" }}</div>
@@ -62,9 +81,23 @@
   </a>
 
   {% if request.user.is_staff %}
-  <a href="{% url 'program:edit' program.id %}" class="ui left labeled icon button">
-    <i class="edit icon"></i> 수정하기
+  <a href="{% url 'program:edit' program.id %}" class="ui left labeled icon yellow button">
+    <i class="pencil icon"></i> 수정하기
   </a>
+
+  <a href="{% url 'program:delete' program.id %}" class="ui right floated icon red button">
+    <i class="trash icon"></i>
+  </a>
+
+
+  <div class="ui modal" id="modal_episode">
+    <i class="close icon"></i>
+
+    <div class="header">에피소드</div>
+    <div class="content">
+      {% include 'episode/form.html' with program=program %}
+    </div>
+  </div>
   {% endif %}
 
 </div>
@@ -73,6 +106,18 @@
 {% block script %}
 <script>
 $('.rating').rating('disable');
+
+$('#modal_episode')
+  .modal({ inverted: true })
+  .modal('attach events', '#show_modal_episode', 'show')
+  .modal({
+    onVisible: $('#airdate').calendar({
+      type: 'date',
+      startMode: 'year',
+      formatter: { date: date_formatter }
+    }),
+  })
+;
 </script>
 {% endblock %}
 

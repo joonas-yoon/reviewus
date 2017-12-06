@@ -1,0 +1,53 @@
+{% now "Y년 m월 d일" as now %}
+
+<form method="POST" class="ui form" id="form_episode" 
+  {% if episode.id %}
+  action="{% url 'episode:edit' episode.id %}"
+  {% else %}
+  action="{% url 'episode:create_with_program' program.id %}"
+  {% endif %}
+>
+  {% csrf_token %}
+  <input type="hidden" name="program_id" value="{{ program.id }}" />
+  <input type="hidden" name="id" value="{{ episode.id }}" />
+  <div class="field">
+    <label>제목</label>
+    <input type="text" name="title" placeholder="제목" maxlength="50" value="{{ episode.title | default:"#회" }}" required>
+  </div>
+  <div class="field">
+    <label>Description</label>
+    <textarea name="content" placeholder="해당 에피소드에 대한 간략한 설명" maxlength="255">{{ episode.content }}</textarea>
+  </div>
+  <div class="field">
+    <label>방영일자</label>
+    <div class="ui calendar" id="airdate">
+      <div class="ui input left icon">
+        <i class="calendar icon"></i>
+        <input type="text" name="airdate" placeholder="방영일자" value="{{ episode.airdate | default:now | date:"Y년 m월 d일"}}">
+      </div>
+    </div>
+  </div>
+  <button class="ui submit primary button">저장</button>
+</form>
+
+<script>
+function date_formatter(date, settings) {
+  if (!date) return '';
+  var day = date.getDate();
+  var month = date.getMonth() + 1;
+  var year = date.getFullYear();
+  return year + '년 ' + month + '월 ' + day + '일';
+}
+
+function reload_input(el){
+  $(el).val($(el).val())
+}
+
+reload_input('[name=airdate]');
+
+$('#form_episode').form({
+  fields: {
+    title: 'empty'
+  }
+});
+</script>

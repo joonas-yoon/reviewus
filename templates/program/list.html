@@ -15,9 +15,9 @@
   {% endif %}
   <div class="ui divider"></div>
 
-  <div class="ui four stackable cards">
+  <div class="ui four stackable link cards">
     {% for program in programs %}
-    <div class="ui raised card">
+    <div class="ui card">
       <div class="content">
         <a href="{% url 'program:view' program.id %}" class="header">{{ program.title }}</a>
         <div class="meta">{{ program.content | truncatewords:4 }}</div>
@@ -33,24 +33,30 @@
           {{ program.num_episodes }}개의 에피소드
         </a>
       </div>
-      <div class="extra content">
-        Rating: 
+      <div class="extra content"> 
+        {%if program.avg_star %}
         <div class="ui star rating" data-rating="{{ program.avg_star | floatformat:"0" }}" data-max-rating="5"></div>
-        {{ program.avg_star | floatformat:"2" }}
+        &nbsp; ({{ program.avg_star | floatformat:"2" }})
+        {% else %}
+        평가 없음
+        {% endif %}
       </div>
     </div>
     {% endfor %}
   </div>
 
   <div class="ui divider"></div>
-  <a href="{% url 'program:list' page.prev %}" class="ui left floated labeled icon button">
-    <i class="left arrow icon"></i>
-    Prev
-  </a>
-  <a href="{% url 'program:list' page.next %}" class="ui right floated labeled icon button">
-    <i class="right arrow icon"></i>
-    Next
-  </a>
+
+  <div style="padding-bottom: 2em; margin-bottom: 2em;">
+    <a href="{% url 'program:list' page.prev %}" class="ui left floated labeled icon button">
+      <i class="left arrow icon"></i>
+      Prev
+    </a>
+    <a href="{% url 'program:list' page.next %}" class="ui right floated labeled icon button">
+      <i class="right arrow icon"></i>
+      Next
+    </a>
+  </div>
 </div>
 {% endblock %}
 

@@ -21,8 +21,8 @@ urlpatterns = [
   url(r'^admin/', admin.site.urls),
   url(r'^accounts/', include('accounts.urls', namespace='accounts')),
   url(r'^program/', include('program.urls', namespace='program')),
-  url(r'', include('home.urls')),
   url(r'', include('django.contrib.auth.urls')),
+  url(r'', include('home.urls')),
   url(r'', include('episode.urls', namespace='episode')),
   url(r'', include('social_django.urls', namespace='social'))
 ]
