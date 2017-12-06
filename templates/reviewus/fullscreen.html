@@ -32,22 +32,19 @@
   {% block header %}
   {% endblock %}
 
-  <div class="pusher">
-    <div class="full height" style="min-height: calc(100vh - 18rem);">
-      <!-- content -->
-      {% block content %}
-        <div class="ui container">
-          <!-- container -->
-          {% block container %}
-          {% endblock %}
-        </div>
+  <!-- content -->
+  {% block content %}
+    <div class="ui container">
+      <!-- container -->
+      {% block container %}
       {% endblock %}
-    </div> 
-    <!-- footer -->
-    {% block footer %}
-      {% include 'reviewus/footer.html' %}
-    {% endblock %}
-  </div>
+    </div>
+  {% endblock %}
+
+  <!-- footer -->
+  {% block footer %}
+    {% include 'reviewus/footer.html' %}
+  {% endblock %}
 </body>
 {% block script %}
 {% endblock %}

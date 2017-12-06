@@ -1,46 +1,11 @@
-{% extends 'reviewus/base.html' %}
+{% extends 'registration/base.html' %}
 
 {% load staticfiles %}
 
-{% block site_title %}Review Us - 회원가입{% endblock %}
-
-{% block css %}
-<style>
-body {
-  margin: 0px;
-  padding: 0px;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  min-width: 320px;
-  background: #FFFFFF;
-  font-size: 14px;
-  line-height: 1.4285em;
-  color: rgba(0, 0, 0, 0.87);
-  font-smoothing: antialiased;
-}
-body > .grid {
-  height: 100%;
-}
-
-.grid .column {
-  max-width: 360px;
-}
-
-.login_background {
-  background: url(https://christmasstockimages.com/free/abstract/star_shaped_light_bokeh.jpg) center center no-repeat;
-  background-size: cover;
-  position: absolute;
-  z-index: -1;
-  width: 110%;
-  height: 110%;
-}
-</style>
-{% endblock %}
+{% block site_title %}리뷰어스 - 회원가입{% endblock %}
 
 {% block content %}
-
-<div class="login_background"></div>
-
+{{ block.super }}
 <div class="ui middle aligned center aligned grid">
   <div class="column">
     <h2 class="ui yellow image header">
@@ -89,7 +54,6 @@ body > .grid {
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block script %}

@@ -1,0 +1,54 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}Review Us{% endblock %}
+
+{% block css %}
+<style>
+body {
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  min-width: 320px;
+  background: #FFFFFF;
+  font-size: 14px;
+  line-height: 1.4285em;
+  color: rgba(0, 0, 0, 0.87);
+  font-smoothing: antialiased;
+}
+body > .grid {
+  height: 100%;
+}
+
+.grid .column {
+  max-width: 360px;
+}
+
+.login_background {
+  background: url({% static 'images/background_star.jpg' %}) center center no-repeat;
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
+  width: 110%;
+  height: 110%;
+}
+
+.ui.menu {
+  margin: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+  <div class="login_background"></div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(function(){
+  $('.form').form();
+});
+</script>
+{% endblock %}

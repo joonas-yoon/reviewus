@@ -1,4 +1,4 @@
-{% extends 'reviewus/base.html' %}
+{% extends 'reviewus/fullscreen.html' %}
 
 {% load staticfiles %}
 
@@ -43,7 +43,8 @@ body > .grid {
 }
 
 .content {
-  width: 760px;
+  width: 100%;
+  max-width: 760px;
   height: 560px;
   display: block;
   position: absolute;
@@ -57,8 +58,38 @@ body > .grid {
   box-shabow: rgba(0,0,0,.35) 0 5px 10px;
   z-index: 5;
 }
+.content .content-wrapper .title {
+  color: rgba(255,255,255,.8);
+  font-size: 7.5em; 
+  font-family:'Righteous', monospace;
+}
+
+/* Smartphones (portrait) */
+@media only screen and (max-width : 320px) {
+  .content .content-wrapper .title {
+    font-size: 2rem;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .content {
+     margin: 0 auto;
+     left: 2.5%;
+     top: 2.5%;
+     width: 95%;
+     height: 95%;
+     padding: 2rem 1rem;
+  }
+  .content .content-wrapper .title {
+     font-size: 4rem;
+     margin: 0;
+  }
+}
 </style>
 {% endblock %}
+
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
 
 {% block content %}
 
@@ -66,7 +97,7 @@ body > .grid {
 
 <div class="content" style="color: white; background: url({% static 'images/background_index.jpg'%}) center center no-repeat; background-size: cover;">
   <div class="content-wrapper">
-    <h1 style="color: rgba(255,255,255,.8); font-size: 7.5em; font-family:'Righteous', monospace;">REVIEW US</h1>
+    <h1 class="title">REVIEW US</h1>
     <br>
     <p class="login">이미 회원이신가요?&nbsp;&nbsp;</p>
     <a class="ui large secondary button" href="{% url 'login' %}">
@@ -98,6 +129,6 @@ body > .grid {
     var p = parseFloat(s.backgroundPositionY || 0) + 0.1;
     s.backgroundPositionY = p + '%';
   }
-  setInterval(goingup, 50);
+  var t = setInterval(goingup, 50);
 </script>
 {% endblock %}

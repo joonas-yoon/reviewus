@@ -49,6 +49,7 @@ class DBManager:
     _cursor = DBManager.conn()
     try:
       result = _cursor.execute(sql, param)
+      print(_cursor._last_executed)
       if cursor:
         return _cursor
       return result

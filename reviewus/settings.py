@@ -75,7 +75,7 @@ else: # JSON env
 SECRET_KEY = ENV_SECRET_KEY or 'secret-keyboard-cat'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com', '*']
 

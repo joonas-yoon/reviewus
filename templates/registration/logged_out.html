@@ -1,0 +1,14 @@
+{% extends 'registration/base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+{{ block.super }}
+<div class="ui text container" style="text-align: center;">
+  <br><br>
+  <h1 class="ui header" style="color: white; font-size: 4rem;">로그아웃되었습니다</h1>
+  <br>
+  <p><a class="ui button very basic inverted" href="{% url 'login' %}">다시 로그인하기</a></p>
+</div>
+{% endblock %}
+

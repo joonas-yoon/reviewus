@@ -1,0 +1,36 @@
+{% load staticfiles %}
+
+<div class="ui inverted menu" style="height: 3rem; border-radius:0; ">
+  <div class="ui container">
+    <div class="item">
+      <a href="{% url 'home:index' %}">
+        <img src="{% static 'images/logo.png' %}" alt="리뷰어스" style="max-width: 2.2rem;"/>
+      </a>
+    </div>
+    <a href="{% url 'program:list' %}" class="item">
+      프로그램
+    </a>
+    <a href="{% url 'episode:list' %}" class="item">
+      에피소드
+    </a>
+
+    <div class="right menu">
+      {% if request.user.is_authenticated %}
+      <div class="ui dropdown item">
+        {{ request.user.username }}님<i class="dropdown icon"></i>
+        <div class="menu">
+          <a href="{% url 'logout' %}" class="item">로그아웃</a>
+        </div>
+      </div>
+      {% else %}
+      <a href="{% url 'login' %}" class="item">로그인</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% block script %}
+<script>
+  $('.dropdown').dropdown();
+</script>
+{% endblock %}
