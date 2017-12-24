@@ -31,8 +31,14 @@ def index(request):
   if not request.user.is_authenticated():
     return HttpResponseRedirect(reverse('login'))
 
-  sql = 'SELECT * FROM ru_review WHERE author_id = %d' % request.user.id
-  my_reviews = DB.execute_and_fetch_all(sql, as_list=True)
+  sql = 'SELECT R.*, P.id AS program_id, P.title AS program_title,\
+      E.id AS episode_id, E.title AS episode_title\
+  FROM\
+      ru_review AS R, ru_program AS P, ru_episode AS E\
+  WHERE\
+      R.episode_id = E.id AND E.program_id = P.id AND R.author_id = %s'
+
+  my_reviews = DB.execute_and_fetch_all(sql, param=(request.user.id), as_list=True)
   
   return render(request, 'accounts/index.html', {
     'user': request.user,

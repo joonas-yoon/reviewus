@@ -9,26 +9,38 @@ def index(request):
   if not request.user.is_authenticated():
     return render(request, 'home/index.html')
 
-  sql = 'SELECT R.*, U.username, E.title as episode_title, E.program_id, \
+  sql = 'SELECT R.*, U.username, U.first_name, U.last_name, E.title as episode_title, E.program_id, \
              P.title as program_title \
          FROM ru_review as R, auth_user as U, ru_episode as E, ru_program as P \
          WHERE R.author_id = U.id AND R.episode_id = E.id AND E.program_id = P.id \
          ORDER BY R.creation_time desc \
          LIMIT 10'
-  """
-  from django.db import connection
-  cursor = connection.cursor()
-  cursor.execute(sql)
-  result = list(cursor.fetchall())
-  fields = [col[0] for col in list(cursor.description)]
-  user_reviews = [
-    dict(zip(fields, row)) for row in result
-  ]
-  """
   user_reviews = DB.execute_and_fetch_all(sql, as_list=True)
+
+  statistic = {
+    'reviews': 0, 'episodes': 0, 'stars': 0
+  }
+
+  for row in user_reviews:
+    name = row['last_name']
+    for i in row['first_name'] or []:
+      name += '*'
+    row['display_name'] = name
+
+  try:
+    sql = 'SELECT count(id) as count FROM ru_episode'
+    statistic['episodes'] = DB.execute_and_fetch(sql, as_row=True)['count']
+
+    sql = 'SELECT count(id) as count, sum(star) as stars FROM ru_review'
+    row = DB.execute_and_fetch(sql, as_row=True)
+    statistic['reviews'] = row['count']
+    statistic['stars'] = row['stars']
+  except:
+    pass
 
   return render(request, 'home/main.html', {
     'user': request.user,
-    'user_reviews': user_reviews
+    'user_reviews': user_reviews,
+    'statistic': statistic
   })
 
