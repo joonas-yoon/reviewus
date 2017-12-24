@@ -34,7 +34,7 @@
         </div>
         <div class="extra">
           <div class="ui yellow label">{{ episode.program.genre_name }}</div>
-          <div class="ui label"><i class="record icon"></i> {{ episode.program.broadcast_name }}</div>
+          <a href="{% url 'broadcasts:view' episode.program.broadcast_id %}" class="ui label"><i class="record icon"></i> {{ episode.program.broadcast_name }}</a>
         </div>
         <div class="extra">
           <div class="ui rating" data-rating="{{ episode.reviews.avg_star | floatformat:"0" }}" data-max-rating="5"></div>

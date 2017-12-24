@@ -23,12 +23,17 @@
         <div class="meta">{{ program.content | truncatewords:4 }}</div>
         <div class="meta">
           <span class="date">
-            {{ program.start_date | date:"Y/m/d" }} ~ {{ program.end_date | date:"Y/m/d" }}
+            {{ program.start_date | date:"Y/m/d" }} ~
+						{% if program.end_date %}
+							{{ program.end_date | date:"Y/m/d" }}
+						{% else %}
+							방영중
+						{% endif %}
           </span>
         </div>
       </div>
       <div class="content">
-        <a>
+        <a href="{% url 'program:view' program.id %}#episodes">
           <i class="film icon"></i>
           {{ program.num_episodes }}개의 에피소드
         </a>

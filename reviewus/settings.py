@@ -75,7 +75,7 @@ else: # JSON env
 SECRET_KEY = ENV_SECRET_KEY or 'secret-keyboard-cat'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com', '*']
 
@@ -198,7 +198,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static/'), # build appropriate path
+]
 
 # Logging
 LOGGING_FILE = os.path.join(BASE_DIR, 'debug.log')

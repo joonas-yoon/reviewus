@@ -35,7 +35,7 @@
   {{ program }}
 -->
 
-  <h2>Episodes</h2>
+  <h2 id="episodes">Episodes</h2>
   <div class="ui feed">
   {% if request.user.is_staff %}
     <div class="event">
@@ -62,7 +62,7 @@
           {{ episode.content | truncatewords:10 }}
         </div>
         <div class="meta">
-          <a href="#ratings">총 {{ episode.total_reviews }}개의 평가</a>
+          <a href="{% url 'episode:view' episode.id %}#reviews">총 {{ episode.total_reviews }}개의 평가</a>
           ({{ episode.avg_star | floatformat:2 }}&nbsp;
           <div class="ui star rating" data-rating="{{ episode.avg_star | floatformat:0 }}" data-max-rating="5" style="margin: 0"></div>)
         </div>

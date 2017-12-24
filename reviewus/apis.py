@@ -248,6 +248,33 @@ def delete_episode(id):
     return False
 
 
+def get_episodes_by_person(id=None, name=None):
+    sql = 'SELECT \
+          PRO.id AS program_id,\
+          PRO.title AS program_title,\
+          EPI.id AS episode_id,\
+          EPI.title AS episode_title,\
+          EPI.content AS episode_content,\
+          EPI.airdate AS episode_airdate,\
+          PER.name AS person_name\
+      FROM\
+          reviewus.ru_program AS PRO,\
+          reviewus.ru_episode AS EPI,\
+          reviewus.ru_person AS PER,\
+          reviewus.ru_cast AS CA\
+      WHERE\
+          CA.episode_id = EPI.id AND EPI.program_id = PRO.id AND CA.person_id = PER.id'\
+
+    if id is not None:
+        sql += ' AND CA.person_id = %s'
+        return DB.execute_and_fetch_all(sql, param=(id), as_list=True)
+    else:
+        # search by name
+        sql += ' AND PER.name like %s'
+        search_name = '%' + name + '%'
+        return DB.execute_and_fetch_all(sql, param=(search_name), as_list=True)
+
+
 """
 ######################################################
 #
@@ -256,8 +283,82 @@ def delete_episode(id):
 ######################################################
 """
 def get_broadcastsystems():
-    sql = 'SELECT * FROM ru_broadcast_system ORDER BY name'
+    sql = 'SELECT \
+        B.id AS broadcast_id,\
+        B.name AS broadcast_name,\
+        COUNT(P.id) AS program_count\
+    FROM\
+        ru_broadcast_system AS B\
+            LEFT JOIN\
+        ru_program AS P ON P.broadcast_id = B.id\
+    GROUP BY B.id\
+    ORDER BY B.name'
+
     return DB.execute_and_fetch_all(sql, as_list=True)
+
+
+def get_broadcastsystem(id):
+    sql = 'SELECT \
+        B.id AS id,\
+        B.name AS name,\
+        COUNT(P.id) AS program_count\
+    FROM\
+        ru_broadcast_system AS B\
+            LEFT JOIN\
+        ru_program AS P ON P.broadcast_id = B.id\
+    WHERE B.id = %s'
+
+    row = DB.execute_and_fetch(sql, param=(id,), as_row=True)
+    if not row['id']:
+        return None
+    return row
+
+
+def create_broadcastsystem(req):
+    query = query_from_request(req)
+
+    sql = 'INSERT INTO ru_broadcast_system (name) VALUES (%s)'
+    data = (
+        query.get('name')
+    )
+
+    res = DB.execute(sql, param=data, cursor=True)
+    try:
+        return res.lastrowid
+    except:
+        pass
+    return None
+
+
+def update_broadcastsystem(req, id):
+    query = query_from_request(req)
+
+    sql = 'UPDATE ru_broadcast_system \
+           SET name = %s \
+           WHERE id = %s'
+    data = (
+        query.get('name') or '',
+        int(id or 0)
+    )
+
+    try:
+        res = DB.execute(sql, param=data)
+        return id
+    except:
+        pass
+
+    return None
+
+
+def delete_broadcastsystem(id):
+    sql = 'DELETE FROM ru_broadcast_system WHERE id = %s'
+
+    try:
+        res = DB.execute(sql, param=(id, ))
+        return res > 0
+    except:
+        pass
+    return False
 
 
 """
@@ -270,4 +371,78 @@ def get_broadcastsystems():
 def get_genres():
     sql = 'SELECT * FROM ru_genre ORDER BY name'
     return DB.execute_and_fetch_all(sql, as_list=True)
+
+
+def get_genre(id):
+    sql = 'SELECT * FROM ru_genre WHERE id = %s'
+    return DB.execute_and_fetch(sql, param=(id, ), as_row=True)
+
+
+"""
+######################################################
+#
+# Person
+#
+######################################################
+"""
+def get_people():
+    sql = 'SELECT * FROM ru_person ORDER BY name'
+    return DB.execute_and_fetch_all(sql, as_list=True)
+
+
+def get_person(id):
+    sql = 'SELECT * FROM ru_person WHERE id = %s'
+    return DB.execute_and_fetch(sql, param=(id, ), as_row=True)
+
+
+def get_people_by_name(name):
+    sql = 'SELECT * FROM ru_person WHERE name like %s'
+    return DB.execute_and_fetch_all(sql, param=('%' + name + '%'), as_list=True)
+
+
+"""
+######################################################
+#
+# Job
+#
+######################################################
+"""
+def get_jobs():
+    sql = 'SELECT * FROM ru_job ORDER BY name'
+    return DB.execute_and_fetch_all(sql, as_list=True)
+
+
+def get_job(id):
+    sql = 'SELECT * FROM ru_job WHERE id = %s'
+    return DB.execute_and_fetch(sql, param=(id, ), as_row=True)
+
+
+"""
+######################################################
+#
+# Cast
+#
+######################################################
+"""
+def get_casts():
+    sql = 'SELECT E.id as episode_id, \
+               E.program_id, E.title, E.content, \
+               P.id as person_id, P.name \
+           FROM \
+               ru_cast AS C, \
+               ru_episode AS E, \
+               ru_person AS P \
+           WHERE \
+               C.episode_id = E.id AND C.person_id = P.id'
+    return DB.execute_and_fetch_all(sql, as_list=True)
+
+
+def get_casts_by_episode(id):
+    sql = ''
+    return DB.execute_and_fetch_all(sql, param=(id,), as_list=True)
+
+
+def get_casts_by_program(id):
+    sql = ''
+    return DB.execute_and_fetch_all(sql, param=(id,), as_list=True)
 

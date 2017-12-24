@@ -35,7 +35,32 @@
   {% endif %}
 
   <div class="ui basic segment">
-    ... reviews ...
+    <h3 class="ui dividing header" id="reviews">한줄평</h3>
+    <div class="ui comments">
+    {% for r in reviews %}
+      <div class="comment">
+        <a class="avatar">
+          <img src="{% static 'images/user.png' %}">
+        </a>
+        <div class="content">
+          <a class="author">{{ r.display_name }}</a>
+          <div class="metadata">
+            <div class="date">{{ r.creation_time | naturaltime }}</div>
+            <div class="rating">
+              <div class="ui rating stars" data-max-rating="5" data-rating="{{ r.stars | floatformat:0 }}"></div>
+            </div>
+          </div>
+          <div class="text">{{ r.comment }}</div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+    <div style="text-align: center;">
+    <div class="ui pagination menu">
+        <a class="item" href="{% url 'episode:view' episode.id page.prev %}#reviews">이전</a>
+        <a class="item" href="{% url 'episode:view' episode.id page.next %}#reviews">다음</a>
+    </div>
+    </div>
   </div>
 </div>
 {% endblock %}

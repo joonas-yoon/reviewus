@@ -8,10 +8,13 @@
       </a>
     </div>
     <a href="{% url 'program:list' %}" class="item">
-      프로그램
+      프로그램별
     </a>
     <a href="{% url 'episode:list' %}" class="item">
-      에피소드
+      에피소드별
+    </a>
+    <a href="{% url 'broadcasts:list' %}" class="item">
+      방송사별
     </a>
 
     <div class="right menu">
@@ -19,6 +22,7 @@
       <div class="ui dropdown item">
         {{ request.user.username }}님<i class="dropdown icon"></i>
         <div class="menu">
+          <a href="{% url 'accounts:index' %}" class="item">내 정보</a>
           <a href="{% url 'logout' %}" class="item">로그아웃</a>
         </div>
       </div>

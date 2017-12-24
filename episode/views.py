@@ -46,8 +46,9 @@ def create(request):
     pass
 
 
-def view(request, id):
+def view(request, id, page=1):
     eid = int(id or 0)
+    page = int(page or 1)
     episode = API.get_episode(eid)
 
     if not episode:
@@ -56,19 +57,32 @@ def view(request, id):
     episode['reviews'] = get_review_info(eid)
     program = API.get_program(episode['program_id'])
 
-    sql = 'SELECT R.*, U.username, E.title as episode_title, E.program_id, \
+    sql = 'SELECT R.*, U.username, U.first_name, U.last_name, E.title as episode_title, E.program_id, \
              P.title as program_title \
            FROM ru_review as R, auth_user as U, ru_episode as E, ru_program as P \
            WHERE R.author_id = U.id AND R.episode_id = E.id AND E.program_id = P.id \
+             AND E.id = %s \
            ORDER BY R.creation_time desc \
-           LIMIT 10'
+           LIMIT %s, %s'
+    data = (
+        eid, (page - 1) * 10, 10
+    )
+    reviews = DB.execute_and_fetch_all(sql, param=data, as_list=True)
 
-    reviews = DB.execute_and_fetch_all(sql, as_list=True) 
+    for r in reviews:
+        u = r['last_name']
+        u += '*' * min(3, len(r['first_name'] or []))
+        r['display_name'] = u
 
     return render(request, 'episode/view.html', {
         'episode': episode,
         'program': program,
-        'reviews': reviews
+        'reviews': reviews,
+        'page': {
+            'prev': max(1, page - 1),
+            'cur' : page,
+            'next': page + 1
+        }
     })
 
 

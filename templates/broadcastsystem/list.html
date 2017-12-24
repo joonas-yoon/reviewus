@@ -1,0 +1,37 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}ReviewUs - 방송사 목록{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <div class="ui five stackable doubling cards">
+  {% if request.user.is_staff %}
+  <a href="{% url 'broadcasts:create' %}" class="blue card">
+    <div class="content" style="text-align: center;">[새로 만들기]</div>
+    <div class="extra" style="text-align: center;"><i class="ui icon plus large"></i></div>
+  </a>
+  {% endif %}
+
+  {% for tv in broads %}
+    <a href="{% url 'broadcasts:view' tv.broadcast_id %}" class="red card">
+      <div class="image" style="background:url({% static "images/broadcasts/" %}{{ tv.broadcast_id }}.png) center center; background-size: cover; height: 100px;"></div>
+      <div class="content">{{ tv.broadcast_name }}</div>
+      <div class="extra"><i class="ui icon film"></i> {{ tv.program_count }}</div>
+    </a>
+  {% endfor %}
+
+  {% if request.user.is_staff %}
+  <a href="{% url 'broadcasts:create' %}" class="blue card">
+    <div class="content" style="text-align: center;">[새로 만들기]</div>
+    <div class="extra" style="text-align: center;"><i class="ui icon plus large"></i></div>
+  </a>
+  {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+

@@ -1,0 +1,29 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}ReviewUs - 방송사{% endblock %}
+
+{% block container %}
+
+<form class="ui form" method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="method" value="{{ method }}" />
+  <input type="hidden" name="id" value="{{ broadcast.id }}" />
+  <h2 class="ui dividing header">방송사</h2>
+  <div class="field">
+    <label>방송사 이름</label>
+    <input type="text" name="name" placeholder="방송사 이름" maxlength="20" value="{{ broadcast.name }}" />
+  </div>
+  <div class="ui submit green button"><i class="check icon"></i> 저장</div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(".form").form({
+  name: 'empty'
+});
+</script>
+{% endblock %}

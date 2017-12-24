@@ -1,18 +1,41 @@
 {% extends 'reviewus/base.html' %}
 
 {% load staticfiles %}
+{% load humanize %}
 
 {% block site_title %}Review Us{% endblock %}
 
 {% block content %}
-<div class="ui conatiner">
+<div class="ui container">
   <br>
   <h1 class="ui header">{ {{ user.username }} }님의 정보</h1>
   
   <h3>작성한 리뷰들</h3>
+  <div class="ui feed">
   {% for review in reviews %}
-  <p>{{ review }}</p>
+    <div class="event">
+      <div class="ui circular label" href="#"></div>
+      <div class="content">
+        <div class="summary">
+          [<a href="{% url 'program:view' review.program_id %}">{{ review.program_title }}</a>/<a href="{% url 'episode:view' review.episode_id %}">{{ review.episode_title }}</a>]&nbsp;
+          {{ review.comment }}
+          <div class="date">{{ review.creation_time | naturaltime }}</div>
+        </div>
+        <div class="meta">
+          <div class="ui rating" data-max-rating="5" data-rating="{{ review.star | floatformat:0 }}"></div>&nbsp;
+          <a href="#"><i class="pencil icon"></i></a>
+          <a href="#"><i class="trash icon"></i></a>
+        </div>
+      </div>
+    </div>
   {% endfor %}
+  </div>
 </div>  
 {% endblock %}
 
+
+{% block script %}
+<script>
+$(".ui.rating").rating('disable');
+</script>
+{% endblock %}
