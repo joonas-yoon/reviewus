@@ -1,0 +1,23 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+{% load humanize %}
+
+{% block site_title %}인물 목록{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <br>
+  <a href="{% url 'person:create' %}" class="ui blue button">만들기</a>
+  <div class="ui floating blue segment" style="min-height: 400px">
+  {% for person in people %}
+    <a href="{% url 'person:view' person.id %}" class="ui label large" style="margin: 2px;">
+      {{ person.name }}
+      <div class="detail">{{ person.job_name | default:"" }}</div>
+    </a>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

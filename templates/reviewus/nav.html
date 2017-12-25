@@ -16,6 +16,9 @@
     <a href="{% url 'broadcasts:list' %}" class="item">
       방송사별
     </a>
+    <a href="{% url 'person:list' %}" class="item">
+      인물들
+    </a>
 
     <div class="right menu">
       {% if request.user.is_authenticated %}

@@ -19,6 +19,17 @@
     </blockquote>
   </div>
 
+  <div class="ui floating segment">
+  등장인물: 
+  {% for p in casting %}
+    <a class="ui basic label" href="{% url 'person:view' p.id %}" style="margin:2px;">{{ p.name }}</a>
+  {% empty %}
+    (추가 예정)
+  {% endfor %}
+  </div>
+
+  <br>
+
   <a href="{% url 'episode:list' %}" class="ui left labeled icon button">
     <i class="list icon"></i> 목록으로
   </a>

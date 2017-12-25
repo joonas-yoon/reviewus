@@ -1,0 +1,29 @@
+{% load staticfiles %}
+{% load humanize %}
+
+<div class="ui feed">
+{% for review in reviews %}
+  <div class="event">
+    <div class="label" href="#"></div>
+    <div class="content">
+      <div class="summary">
+        [<a href="{% url 'program:view' review.program_id %}">{{ review.program_title }}</a>/<a href="{% url 'episode:view' review.episode_id %}">{{ review.episode_title }}</a>]&nbsp;
+        {{ review.comment }}
+        <div class="date">{{ review.creation_time | naturaltime }}</div>
+      </div>
+      <div class="meta">
+        <div class="ui rating" data-max-rating="5" data-rating="{{ review.star | floatformat:0 }}"></div>&nbsp;
+        {% if request.user.id == review.author_id %}
+        <!--<a href="{% url 'review:edit' review.id %}"><i class="pencil icon"></i></a>-->
+        <a href="{% url 'review:delete' review.id %}"><i class="trash icon"></i></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+<script>
+$(".rating").rating('disable');
+</script>
+

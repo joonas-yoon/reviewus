@@ -1,0 +1,69 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}{{ program.title }} - 등장 인물 추가{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <h2 class="ui dividing header">{{ program.title }}</h2>
+
+  <blockquote class="basic">
+  {{ program.content | linebreaks }}
+  <p><a href="{% url 'program:view' program.id %}">(프로그램 정보)</a></p>
+  </blockquote>
+
+  <form method="POST" class="ui form">
+    {% csrf_token %}
+    <div class="field">
+      <label>에피소드</label>
+      <div class="ui fluid search selection dropdown" id="dropdown_episode">
+        <input type="hidden" name="episode_id">
+        <i class="dropdown icon"></i>
+        <div class="default text">선택</div>
+        <div class="menu">
+        {% for epi in episodes %}
+          <div class="item" data-value="{{ epi.id }}" data-text="{{ epi.title }} {{ epi.content }}">
+            <i class="film icon"></i>({{ epi.title }}) {{ epi.content | truncatechars:20 }}
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="field">
+      <label>등장 인물</label>
+      <select name="casting" class="ui fluid search selection dropdown" id="dropdown_people" multiple="">
+        <option value="">(선택)</option>
+        {% for p in people %}
+          <option value="{{ p.id }}">{{ p.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="ui green button">추가하기</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$('#dropdown_episode').dropdown({
+  'set selected': 1,
+  'fullTextSearch': true
+});
+$('#dropdown_people').dropdown({
+  fullTextSearch: true,
+  maxSelections: 10,
+  allowAdditions: true
+});
+$(".form").form({
+  fields: {
+    episode_id: 'empty',
+    casting: 'empty'
+  }
+});
+</script>
+{% endblock %}

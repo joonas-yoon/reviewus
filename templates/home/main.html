@@ -41,7 +41,7 @@
         <tr>
           <td>{{ r.display_name }}</td>
           <td><a href="{% url 'program:view' r.program_id %}">{{ r.program_title }}</a></td>
-          <td>{{ r.episode_title }}</td>
+          <td><a href="{% url 'episode:view' r.episode_id %}">{{ r.episode_title }}</a></td>
           <td>{{ r.comment }}</td>
           <td><div class="ui star rating" data-rating="{{ r.star }}" data-max-rating="5"></div></td>
 					<td><div class="ui label basic compact">{{ r.creation_time | naturaltime }}</div></td>

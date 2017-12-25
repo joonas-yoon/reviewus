@@ -15,7 +15,7 @@
   <table class="ui very basic celled table" style="margin: 0 auto;">
   <tr>
     <td>방송사</td>
-    <td><a href="#/{{ program.broadcast_id }}">{{ program.broadcast_name }}</a></td>
+    <td><a href="{% url 'broadcasts:view' program.broadcast_id %}">{{ program.broadcast_name }}</a></td>
   </tr>
   <tr>
     <td>장르</td>
@@ -31,24 +31,65 @@
   </tr>
   </table>
 
-<!--
-  {{ program }}
--->
+  <button id="show_recent_reviews" class="ui button">최근 리뷰 보기</button>
+  <div class="ui small modal" id="recent_reviews">
+    <div class="content">
+      {% include 'review/_list.html' with reviews=reviews %}
+    </div>
+  </div>
+
+  <button id="show_topN" class="ui orange button">TOP 10</button>
+  <div class="ui small modal" id="modal_topN">
+    <div class="content">
+
+      <div class="ui feed">
+      {% for episode in episode_top10 %}
+        <div class="event">
+          <div class="label">
+            <i class="film icon"></i>
+          </div>
+          <div class="content">
+            <div class="summary">
+              <a href="{% url 'episode:view' episode.id %}">{{ episode.title }}</a>
+            </div>
+            <div class="extra text">
+              {{ episode.content | truncatewords:10 }}
+            </div>
+            <div class="meta">
+              <a href="{% url 'episode:view' episode.id %}#reviews">총 {{ episode.total_reviews }}개의 평가</a>
+              ({{ episode.avg_star | floatformat:2 }}&nbsp;
+              <div class="ui star rating" data-rating="{{ episode.avg_star | floatformat:0 }}" data-max-rating="5" style="margin: 0"></div>)
+            </div>
+            <div class="meta">
+              <div class="date">{{ episode.airdate | date:"Y-m-d" }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+
+    </div>
+  </div>
 
   <h2 id="episodes">Episodes</h2>
   <div class="ui feed">
-  {% if request.user.is_staff %}
     <div class="event">
       <div class="label"></div>
       <div class="content">
-        <div class="extra text">
-          <button id="show_modal_episode" class="ui left labeled icon basic blue button">
-            <i class="plus icon"></i> 에피소드 추가
-          </button>
-        </div>
+        {% if request.user.is_staff %}
+        <button id="show_modal_episode" class="ui left labeled icon basic blue button">
+          <i class="plus icon"></i> 에피소드 추가
+        </button>
+        <a href="{% url 'program:add_cast' program.id %}" class="ui left labeled icon basic green button">
+          <i class="plus icon"></i> 등장 인물 추가
+        </a>
+        {% endif %}
+        <button id="show_modal_review" class="ui left labeled icon basic button">
+          <i class="plus icon"></i> 한줄평 남기기
+        </button>
       </div>
     </div>
-  {% endif %}
+
   {% for episode in program.episodes %}
     <div class="event">
       <div class="label">
@@ -100,12 +141,97 @@
   </div>
   {% endif %}
 
+  <div id="modal_review" class="ui small modal">
+    <div class="header">한줄평</div>
+    <div class="content">
+      <form method="POST" action="{% url 'review:create' %}" class="ui comment form">
+        {% csrf_token %}
+        <div class="field">
+          <label>프로그램</label>
+          {% if programs %}
+          <div class="ui fluid search selection dropdown" id="dropdown_program">
+            <input type="hidden" name="program_id">
+            <i class="dropdown icon"></i>
+            <div class="default text">선택</div>
+            <div class="menu">
+            {% for pro in programs %}
+              <div class="item" data-value="{{ pro.id }}" data-text="{{ pro.title }}">
+                <i class="tv icon"></i>{{ pro.title }} - {{ pro.content | truncatechars:20 }}
+              </div>
+            {% endfor %}
+            </div>
+          </div>
+          {% else %}
+          <div class="ui left icon input disabled" style="opacity: 1;">
+            <i class="tv icon"></i>
+            <input type="hidden" value="{{ program.id }}" name="program_id" />
+            <input type="text" disabled value="{{ program.title }}"/>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="field">
+          <label>에피소드</label>
+          <div class="ui fluid search selection dropdown" id="dropdown_episode">
+            <input type="hidden" name="episode_id">
+            <i class="dropdown icon"></i>
+            <div class="default text">선택</div>
+            <div class="menu">
+            {% for epi in program.episodes %}
+              <div class="item" data-value="{{ epi.id }}" data-text="{{ epi.title }} {{ epi.content }}">
+                <i class="film icon"></i>({{ epi.title }}) {{ epi.content | truncatechars:20 }}
+              </div>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="fields">
+          <div class="field">
+            <label>별점</label>
+            <input type="hidden" name="star" id="rating_star_in" value="1" />
+            <div class="ui star rating" data-max-rating="5" data-rating="1" id="rating_star" style="margin-top: 0.75em;"></div>
+          </div>
+          <div class="field" style="width: 100%;">
+            <label>한줄평</label>
+            <div class="ui input">
+              <input type="text" name="comment" placeholder="한줄평 남기기...">
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="text-align: center;">
+          <button class="ui submit approve green button">확인</button>
+          <div class="ui cancel button">취소</div>
+        </div>
+
+        <div class="ui error message"></div>
+      </form>
+<script>
+$(function(){
+  $(".comment.form").form({
+    fields: {
+      comment: 'minLength[3]',
+      episode_id: 'empty'
+    }
+  });
+  $("#rating_star").rating({onRate:function(v){console.log(v);$("#rating_star_in").val(v);}});
+});
+</script>
+
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 
 {% block script %}
 <script>
 $('.rating').rating('disable');
+$('#dropdown_episode').dropdown({
+  'set selected': 1,
+  'fullTextSearch': true
+});
 
 $('#modal_episode')
   .modal({ inverted: true })
@@ -117,6 +243,22 @@ $('#modal_episode')
       formatter: { date: date_formatter }
     }),
   })
+;
+
+
+$("#modal_review")
+  .modal({ inverted: true })
+  .modal('attach events', '#show_modal_review', 'show')
+;
+
+$("#recent_reviews")
+  .modal({ inverted: true })
+  .modal('attach events', '#show_recent_reviews', 'show')
+;
+
+$("#modal_topN")
+  .modal({ inverted: true })
+  .modal('attach events', '#show_topN', 'show')
 ;
 </script>
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}인물 - {{ person.name }}{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <br> 
+  {% if request.user.is_staff %}
+  <a href="{% url 'person:edit' person.id %}" class="ui orange button">수정하기</a>
+  {% endif %}
+
+  <h2 class="ui header">{{ person.name }}</h2>
+  <blockquote class="basic">
+    <p>이름: {{ person.name }}</p>
+    <p>직업: {{ person.job_name | default:"없음" }}</p>
+    <p>생년월일: {{ person.birth_date | date:"Y년 m월 d일" | default:"알수없음" }}</p>
+    <p>-- 정보 --<br>{{ person.details | linebreaks }}</p>
+  </blockquote>
+
+  <h3 class="ui dividing header">출연 에피소드</h3>
+  <div>
+  {% for epi in episodes %}
+    <a class="ui label" href="{% url 'episode:view' epi.episode_id %}" style="margin: 5px 2px;">
+      {{ epi.title }}
+      <div class="detail">{{ epi.episode_title }}</div>
+    </a>
+  {% empty %}
+    <p>(없음)</p>
+  {% endfor %}
+  </div>
+</div>
+{% endblock %}
+

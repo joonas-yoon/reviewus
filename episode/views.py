@@ -74,10 +74,19 @@ def view(request, id, page=1):
         u += '*' * min(3, len(r['first_name'] or []))
         r['display_name'] = u
 
+    sql = 'SELECT distinct P.id, P.name\
+    FROM ru_cast AS C, ru_episode AS E, ru_person AS P\
+    WHERE C.episode_id = E.id AND C.person_id = P.id AND E.id = %s\
+    ORDER BY P.name'
+    casting = DB.execute_and_fetch_all(sql, param=(eid,), as_list=True)
+
+    print(casting)
+
     return render(request, 'episode/view.html', {
         'episode': episode,
         'program': program,
         'reviews': reviews,
+        'casting': casting,
         'page': {
             'prev': max(1, page - 1),
             'cur' : page,

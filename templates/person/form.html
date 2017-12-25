@@ -1,0 +1,80 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}리뷰어스 - 인물 추가{% endblock %}
+
+{% block container %}
+
+{% now "Y년 m월 d일" as now %}
+
+<form class="ui form" method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="method" value="{{ method }}" />
+  <input type="hidden" name="id" value="{{ person.id }}" />
+  <h2 class="ui dividing header">인물</h2>
+  <div class="field">
+    <label>이름</label>
+    <input type="text" name="name" placeholder="인물 이름" maxlength="50" value="{{ person.name }}" />
+  </div>
+  <div class="field">
+    <select name="job_id" class="ui search selection dropdown">
+    <option value="{{ person.job_id }}">직업 선택</option>
+    {% for job in jobs %}
+      <option value="{{ job.id }}">{{ job.name }}</option>
+    {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <div class="ui calendar" id="birthdate">
+      <div class="ui input left icon">
+        <i class="calendar icon"></i>
+        <input type="text" name="birth_date" placeholder="생일" value="{{ person.birth_date | default:now | date:"Y년 m월 d일"}}">
+      </div>
+    </div>
+
+  </div>
+  <div class="field">
+    <textarea name="details" placeholder="비고"></textarea>
+  </div>
+  <div class="ui error message"></div>
+  <div class="ui submit green button"><i class="check icon"></i> 확인</div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(function(){
+  $(".form").form({
+    fields: {
+      name: 'empty',
+      job_id: 'empty',
+      birth_date: 'empty'
+    }
+  });
+
+  $(".dropdown").dropdown();
+
+  function date_formatter(date, settings) {
+    if (!date) return '';
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    return year + '년 ' + month + '월 ' + day + '일';
+  }
+
+  function reload_input(el){
+    $(el).val($(el).val())
+  }
+
+  reload_input('[name=birth_date]');
+
+  $('#birthdate').calendar({
+    type: 'date',
+    startMode: 'year',
+    formatter: { date: date_formatter }
+  })
+});
+</script>
+{% endblock %}

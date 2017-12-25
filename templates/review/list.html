@@ -1,0 +1,15 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}리뷰어스 - 리뷰 목록{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  {% include 'review/_list.html' with reviews=reviews %}
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+

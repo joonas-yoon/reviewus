@@ -176,7 +176,11 @@ def get_episodes(page=1, nums=10):
     return DB.execute_and_fetch_all(sql, param=params, as_list=True)
 
 
-def get_episodes_by_program(program_id):
+def get_episodes_by_program(program_id, top=False):
+    topcond = ''
+    if top:
+        topcond = ' avg_star DESC, '
+
     program_id = int(program_id or 0)
     sql = 'SELECT E.*, \
                AVG(R.star) as avg_star, \
@@ -186,7 +190,7 @@ def get_episodes_by_program(program_id):
            ON R.episode_id = E.id \
            WHERE E.program_id = %s \
            GROUP BY E.id \
-           ORDER BY airdate IS NULL DESC, airdate DESC'
+           ORDER BY ' + topcond + ' airdate IS NULL DESC, airdate DESC'
 
     return DB.execute_and_fetch_all(sql, param=(program_id), as_list=True)
 
@@ -364,6 +368,100 @@ def delete_broadcastsystem(id):
 """
 ######################################################
 #
+# Review
+#
+######################################################
+"""
+def get_reviews(page=1, num=50, author=None, program=None, episode=None):
+
+    cond = ''
+    condd = ()
+    if program:
+        cond += ' AND P.id = %s'
+        condd += (program,)
+    if author:
+        cond += ' AND R.author_id = %s'
+        condd += (author,)
+    if episode:
+        cond += ' AND E.id = %s'
+        condd += (episode,)
+
+    sql = 'SELECT R.*, E.title as episode_title, P.id as program_id, P.title as program_title\
+    FROM\
+        ru_review AS R,\
+        ru_episode AS E,\
+        ru_program AS P\
+    WHERE\
+      R.episode_id = E.id\
+        AND E.program_id = P.id' + cond + '\
+    ORDER BY creation_time DESC\
+    LIMIT %s, %s'
+    data = condd + (
+        num * (page-1), num
+    )
+    return DB.execute_and_fetch_all(sql, param=data, as_list=True)
+
+
+def get_review(id):
+    sql = 'SELECT * FROM ru_review where id = %s ORDER BY creation_time DESC'
+    return DB.execute_and_fetch(sql, param=(id,), as_row=True)
+
+
+def create_review(req, author_id):
+    query = query_from_request(req)
+
+    sql = 'INSERT INTO ru_review (author_id, episode_id, comment, star) VALUES (%s, %s, %s, %s)'
+    data = (
+        author_id,
+        int(query.get('episode_id')),
+        query.get('comment'),
+        int(query.get('star') or 1)
+    )
+
+    print(data)
+
+    res = DB.execute(sql, param=data, cursor=True)
+    try:
+        return res.lastrowid
+    except:
+        pass
+    return None
+
+
+def update_review(req, id):
+    query = query_from_request(req)
+
+    sql = 'UPDATE ru_broadcast_system \
+           SET name = %s \
+           WHERE id = %s'
+    data = (
+        query.get('name') or '',
+        int(id or 0)
+    )
+
+    try:
+        res = DB.execute(sql, param=data)
+        return id
+    except:
+        pass
+
+    return None
+
+
+def delete_review(id):
+    sql = 'DELETE FROM ru_review WHERE id = %s'
+
+    try:
+        res = DB.execute(sql, param=(id, ))
+        return res > 0
+    except:
+        pass
+    return False
+
+
+"""
+######################################################
+#
 # Genre
 #
 ######################################################
@@ -386,7 +484,12 @@ def get_genre(id):
 ######################################################
 """
 def get_people():
-    sql = 'SELECT * FROM ru_person ORDER BY name'
+    sql = 'SELECT P.id as id, P.name as name, J.name as job_name, J.id as job_id\
+    FROM\
+        ru_person AS P\
+            LEFT JOIN\
+        ru_job AS J ON P.job_id = J.id\
+    ORDER BY P.name, J.name'
     return DB.execute_and_fetch_all(sql, as_list=True)
 
 
@@ -398,6 +501,50 @@ def get_person(id):
 def get_people_by_name(name):
     sql = 'SELECT * FROM ru_person WHERE name like %s'
     return DB.execute_and_fetch_all(sql, param=('%' + name + '%'), as_list=True)
+
+
+def create_person(req):
+    query = query_from_request(req)
+
+    sql = 'INSERT INTO ru_person (name, job_id, birth_date, details) VALUES (%s, %s, %s, %s)'
+    data = (
+        query.get('name'),
+        int(query.get('job_id')),
+        parse_date(query.get('birth_date')),
+        query.get('details')
+    )
+
+    print(data)
+
+    res = DB.execute(sql, param=data, cursor=True)
+    try:
+        return res.lastrowid
+    except:
+        pass
+    return None
+
+
+def update_person(req, id):
+    query = query_from_request(req)
+
+    sql = 'UPDATE ru_person \
+           SET name=%s, job_id=%s, birth_date=%s, details=%s \
+           WHERE id = %s'
+    data = (
+        query.get('name'),
+        int(query.get('job_id')),
+        parse_date(query.get('birth_date')),
+        query.get('details') or '',
+        int(id or 0)
+    )
+
+    try:
+        res = DB.execute(sql, param=data)
+        return id
+    except:
+        pass
+
+    return None
 
 
 """

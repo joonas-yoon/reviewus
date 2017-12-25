@@ -1,0 +1,56 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+
+{% block site_title %}{{ broadcast.name }}{% endblock %}
+
+{% block container %}
+<div class="ui container">
+  <br>
+  <h2 class="ui dividing header">방송사: {{ broadcast.name }}</h2>
+  <div style="text-align: center;">
+    <img class="ui medium rounded image" src="{% static 'images/broadcasts/' %}{{ broadcast.id }}.png" style="margin:0 auto;"/>
+
+    <p style="margin-top: 20px;">
+      평균 평점: {{ broadcast.avg_star | floatformat:5 }}
+    </p>
+    <div class="ui star rating" data-rating="{{ broadcast.avg_star | add:broadcast.avg_star | floatformat:0 }}" data-max-rating="10" style="margin: 0"></div>
+  </div>
+
+  <h2 id="programs" class="ui dividing header">{{ broadcast.name }} 프로그램 목록</h2>
+  <div class="ui list">
+  {% for pro in programs %}
+    <div class="item">
+      <i class="tv icon"></i>
+      <div class="content">
+        <div class="header">
+          <a href="{% url 'program:view' pro.id %}">{{ pro.title }}</a>
+        </div>
+        <div class="description">{{ pro.content | default:"설명 없음"| truncatechars:100 }}</div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="item">
+      <p>준비중</p>
+    </div>
+  {% endfor %}
+  </div>
+
+  {% if request.user.is_staff %}
+  <div>
+    <a href="{% url 'broadcasts:edit' broadcast.id %}" class="ui labeled icon yellow button">
+      <i class="pencil icon"></i> 수정하기
+    </a>
+    <a href="{% url 'broadcasts:delete' broadcast.id %}" class="ui labeled icon red button">
+      <i class="trash icon"></i> 삭제하기
+    </a>
+  </div> 
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(".rating").rating('disable');
+</script>
+{% endblock %}

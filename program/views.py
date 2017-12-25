@@ -75,8 +75,13 @@ def view(request, id):
     if not program:
         raise Http404
 
+    reviews = API.get_reviews(num=10, program=id)
+    top10 = API.get_episodes_by_program(id, top=True)[:10]
+
     return render(request, 'program/view.html', {
-        'program': program
+        'program': program,
+        'reviews': reviews,
+        'episode_top10': top10
     })
 
 
@@ -97,6 +102,30 @@ def delete(request, id):
         })
 
 
+@staff_member_required
+def add_cast(request, id):
+    program = API.get_program(id)
 
+    if not program:
+        raise Http404
 
+    if request.method == 'POST':
+        eid = int(request.POST.get('episode_id') or 0)
+        for p in request.POST.getlist('casting'):
+            try:
+                sql = 'INSERT INTO ru_cast (episode_id, person_id) VALUES (%s, %s)'
+                DB.execute(sql, param=(eid, int(p),))
+            except:
+                pass
+
+        return redirect('episode:view', eid)
+
+    episodes = program['episodes'] or []
+    people = API.get_people() or []
+
+    return render(request, 'program/add_person.html', {
+        'program': program,
+        'episodes': episodes,
+        'people': people
+    })
 
