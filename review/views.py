@@ -32,7 +32,7 @@ def create(request):
 
     try:
         eid = API.query_from_request(request.body).get('episode_id')
-        return redirect('episode:view', eid)
+        return redirect('review:list', eid)
     except:
         raise Http404
 

@@ -32,6 +32,8 @@ def create(request):
         broadcastings = API.get_broadcastsystems()
         genres = API.get_genres()
 
+        print(broadcastings)
+
         return render(request, 'program/form.html', {
             'method': 'create',
             'broadcastings': broadcastings,

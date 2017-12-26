@@ -1,0 +1,18 @@
+{% extends 'reviewus/base.html' %}
+
+{% load staticfiles %}
+{% load humanize %}
+
+{% block site_title %}등장 인물 목록{% endblock %}
+
+{% block content %}
+{% for person in person %}
+<p>
+<a href="{% url 'person:view' person.id %}" class="red card"></a>
+</p>
+{% endfor %}
+
+
+{% endblock %}
+{% block script %}
+{% endblock %}

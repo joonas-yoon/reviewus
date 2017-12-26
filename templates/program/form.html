@@ -21,7 +21,7 @@
       <select name="broadcast_id" class="ui fluid dropdown">
         <option value="{{ program.broadcast_id }}">Select</option>
         {% for broad in broadcastings %}
-        <option value="{{ broad.id }}">{{ broad.name }}</option>
+        <option value="{{ broad.broadcast_id }}">{{ broad.broadcast_name }}</option>
         {% endfor %}
       </select>
     </div>
